@@ -7,9 +7,9 @@ const SEEN_KEY = "animeintel:slice-seen";
 // The slice intro. First visit: full katana sweep + the site burning away
 // into ashes. Returning visits (same tab): a ~600ms quick slice.
 const TIMING = {
-  // The slash (swe) is longer and cinematic. After it lands, the wordmark
-  // transitions in, then a beat, then the site fades in.
-  intro: { swe: 0.95, ashDelay: 1.1, ashDur: 0.4, fadeDelay: 2.1, fadeDur: 0.5 },
+  // The slash (swe) is long and cinematic. The wordmark is typed in after
+  // it lands, then a beat, then the site fades in.
+  intro: { swe: 1.5, ashDelay: 1.7, ashDur: 0.4, fadeDelay: 3.2, fadeDur: 0.5 },
   quick: { swe: 0.22, ashDelay: 0.3, ashDur: 0.3, fadeDelay: 0.65, fadeDur: 0.25 },
 };
 
@@ -74,9 +74,9 @@ export default function SliceIntro() {
       {/* the dark screen that burns away into ashes after the slash */}
       <div className="slice-burn" aria-hidden />
 
-      {/* the wordmark, per the design spec (55% from top center) */}
+      {/* the wordmark, typed in after the slash */}
       <div className="slice-wordmark" aria-hidden>
-        Anime<span>Intel</span>
+        Anime Intel
       </div>
 
       {/* floating embers */}

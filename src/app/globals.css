@@ -19,7 +19,7 @@
 }
 
 /* the wordmark — per design spec: orange, bold condensed italic uppercase.
-   Reveals with a slow scale/fade-in after the slash lands (delayed). */
+   Typed in character-by-character after the slash, with a blinking caret. */
 .slice-wordmark {
   position: absolute;
   left: 50%;
@@ -35,25 +35,39 @@
   text-shadow: 0 0 12px #ffe5cc, 0 0 34px #ff6b1a;
   white-space: nowrap;
   z-index: 1;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.82);
-  animation: sliceWordmark 0.7s ease-out forwards;
-  animation-delay: 1.05s;
+  overflow: hidden;
+  width: 0;
+  animation: sliceType 1.1s steps(11, end) forwards;
+  animation-delay: 1.6s;
 }
-.slice-wordmark span {
-  color: #ff6b1a;
-  text-shadow: 0 0 12px #ffe5cc, 0 0 34px #ff6b1a;
+/* blinking caret after the typed text */
+.slice-wordmark::after {
+  content: "";
+  position: relative;
+  display: inline-block;
+  width: 0.12em;
+  height: 1.05em;
+  margin-left: 0.08em;
+  vertical-align: -0.12em;
+  background: #ff8533;
+  box-shadow: 0 0 10px #ff8533;
+  animation: sliceCaret 0.8s steps(1) infinite;
 }
-@keyframes sliceWordmark {
+@keyframes sliceType {
   0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.82);
-    letter-spacing: 0.1em;
+    width: 0;
   }
   100% {
+    width: 100%;
+  }
+}
+@keyframes sliceCaret {
+  0%,
+  100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    letter-spacing: -0.02em;
+  }
+  50% {
+    opacity: 0;
   }
 }
 
