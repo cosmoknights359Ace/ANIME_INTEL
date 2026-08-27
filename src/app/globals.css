@@ -18,7 +18,8 @@
   animation-delay: var(--fade-delay);
 }
 
-/* the wordmark — per design spec: orange, bold condensed italic uppercase */
+/* the wordmark — per design spec: orange, bold condensed italic uppercase.
+   Reveals with a slow scale/fade-in after the slash lands (delayed). */
 .slice-wordmark {
   position: absolute;
   left: 50%;
@@ -34,10 +35,26 @@
   text-shadow: 0 0 12px #ffe5cc, 0 0 34px #ff6b1a;
   white-space: nowrap;
   z-index: 1;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.82);
+  animation: sliceWordmark 0.7s ease-out forwards;
+  animation-delay: 1.05s;
 }
 .slice-wordmark span {
   color: #ff6b1a;
   text-shadow: 0 0 12px #ffe5cc, 0 0 34px #ff6b1a;
+}
+@keyframes sliceWordmark {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.82);
+    letter-spacing: 0.1em;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    letter-spacing: -0.02em;
+  }
 }
 
 /* the "screen" that burns away — cracks/gaps appear then it dissolves */
@@ -45,28 +62,10 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: radial-gradient(circle at 50% 45%, rgba(50, 15, 5, 0.35), rgba(10, 8, 6, 0.6) 60%, #050505 100%);
+  /* subtle darkening — no orange flash */
+  background: radial-gradient(circle at 50% 45%, rgba(20, 10, 6, 0.25), rgba(0, 0, 0, 0.7) 100%);
   opacity: 0;
   animation: sliceBurn var(--ash-dur) var(--ash-delay) ease forwards;
-}
-/* burn "fractures" — warm ember blooms that glow across the screen */
-.slice-burn::before,
-.slice-burn::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(251, 113, 20, 0.55), transparent 40%),
-    radial-gradient(circle at 70% 65%, rgba(249, 115, 22, 0.45), transparent 45%),
-    radial-gradient(circle at 45% 80%, rgba(255, 170, 90, 0.4), transparent 50%);
-  background-repeat: no-repeat;
-  opacity: 0;
-}
-.slice-burn::before {
-  animation: sliceBurst var(--ash-dur) var(--ash-delay) linear forwards;
-}
-.slice-burn::after {
-  animation: sliceBurst var(--ash-dur) calc(var(--ash-delay) + var(--ash-dur) * 0.2) linear forwards;
 }
 
 /* embers drifting up as it burns */
@@ -74,11 +73,11 @@
   position: absolute;
   left: var(--x);
   top: var(--y0);
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
-  background: radial-gradient(circle, #fecaca 0%, #f97316 60%, transparent 100%);
-  box-shadow: 0 0 8px 2px rgba(249, 115, 22, 0.7);
+  background: radial-gradient(circle, #fde2c8 0%, #f97316 60%, transparent 100%);
+  box-shadow: 0 0 6px 1px rgba(249, 115, 22, 0.6);
   z-index: 3;
   opacity: 0;
   animation: sliceEmber var(--d) var(--delay) ease-in infinite;
@@ -88,8 +87,8 @@
     opacity: 0;
     transform: translate(0, 0) scale(var(--s));
   }
-  10% {
-    opacity: 0.95;
+  12% {
+    opacity: 0.8;
   }
   100% {
     opacity: 0;
@@ -101,28 +100,10 @@
   0% {
     opacity: 0;
   }
-  12% {
-    opacity: 1;
-  }
-  60% {
-    clip-path: inset(0 0 0 0);
+  15% {
     opacity: 1;
   }
   100% {
-    clip-path: inset(18% 0 22% 0);
-    opacity: 0.85;
-  }
-}
-@keyframes sliceBurst {
-  0% {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  40% {
-    opacity: 0.9;
-  }
-  100% {
-    transform: scale(1.6);
     opacity: 0;
   }
 }
