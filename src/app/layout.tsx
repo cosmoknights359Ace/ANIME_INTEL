@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Zen_Kurenaido } from "next/font/google";
 import Link from "next/link";
 import SliceIntro from "@/components/SliceIntro";
 import "./globals.css";
+
+const paper = Zen_Kurenaido({ weight: "400", subsets: ["latin"], variable: "--font-paper" });
 
 export const metadata: Metadata = {
   title: "AnimeIntel — anime answers, not anime data",
@@ -12,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100 antialiased">
+      <body className={`${paper.variable} flex min-h-screen flex-col bg-zinc-950 text-zinc-100 antialiased`}>
         <SliceIntro />
         <header>
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">

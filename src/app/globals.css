@@ -18,26 +18,26 @@
   animation-delay: var(--fade-delay);
 }
 
-/* the wordmark — per design spec: orange, bold condensed italic uppercase.
-   Typed in character-by-character after the slash, with a blinking caret. */
+/* the wordmark — thin Japanese serif (mincho) like ink on paper.
+   Fixed-width box revealed left-to-right via clip-path, so the text
+   types in place and stays centered (no width re-render shift). */
 .slice-wordmark {
   position: absolute;
   left: 50%;
   top: 45%;
   transform: translate(-50%, -50%);
-  font-weight: 900;
-  font-stretch: condensed;
+  font-family: var(--font-paper), "Zen Kurenaido", "Noto Serif JP", sans-serif;
+  font-weight: 400;
   text-transform: uppercase;
-  font-style: italic;
-  letter-spacing: -0.02em;
-  font-size: clamp(2.4rem, 9vw, 6rem);
-  color: #ff6b1a;
-  text-shadow: 0 0 12px #ffe5cc, 0 0 34px #ff6b1a;
+  font-size: clamp(2.2rem, 8vw, 5.5rem);
+  letter-spacing: 0.08em;
+  color: #f3d0b0;
+  text-shadow: 0 0 12px rgba(255, 180, 120, 0.45), 0 0 30px rgba(255, 107, 26, 0.5);
   white-space: nowrap;
   z-index: 1;
-  overflow: hidden;
-  width: 0;
-  animation: sliceType 1.1s steps(11, end) forwards;
+  padding: 0.1em 0.1em 0.2em 0.1em;
+  clip-path: inset(0 100% 0 0);
+  animation: sliceType 1.2s steps(12, end) forwards;
   animation-delay: 1.6s;
 }
 /* blinking caret after the typed text */
@@ -45,20 +45,20 @@
   content: "";
   position: relative;
   display: inline-block;
-  width: 0.12em;
-  height: 1.05em;
-  margin-left: 0.08em;
-  vertical-align: -0.12em;
-  background: #ff8533;
-  box-shadow: 0 0 10px #ff8533;
-  animation: sliceCaret 0.8s steps(1) infinite;
+  width: 0.08em;
+  height: 1em;
+  margin-left: 0.12em;
+  vertical-align: -0.05em;
+  background: #f2b888;
+  box-shadow: 0 0 8px #f2b888;
+  animation: sliceCaret 0.85s steps(1) infinite;
 }
 @keyframes sliceType {
-  0% {
-    width: 0;
+  from {
+    clip-path: inset(0 100% 0 0);
   }
-  100% {
-    width: 100%;
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 @keyframes sliceCaret {
