@@ -2,9 +2,8 @@
 
 /* ── Slice intro ────────────────────────────────────────────
    A katana sweeps diagonally across a black void; its neon path
-   is highlighted, then the page splits into two halves that slide
-   apart along the cut and pull back together to reveal the site.
-   Animation durations come from CSS vars set on .slice-root by the
+   is highlighted, then the screen burns away into ashes to reveal
+   the site. Durations come from CSS vars set on .slice-root by the
    component (intro vs quick-slice timing). */
 
 .slice-root {
@@ -18,22 +17,11 @@
   animation-delay: var(--fade-delay);
 }
 
-.slice-half {
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  filter: brightness(0.35);
-  transform-origin: center;
-}
-
-/* the visible "page" is the site snapshot — a stacked collage of the
-   brand wordmark + neon grid so it reads as the site itself */
-.slice-half::before {
-  content: "AnimeIntel";
+/* the brand — dimmed, getting consumed by the burn */
+.slice-brand {
   position: absolute;
   left: 50%;
-  top: 42%;
+  top: 45%;
   transform: translate(-50%, -50%);
   font-size: clamp(2rem, 8vw, 5rem);
   font-weight: 800;
@@ -41,60 +29,103 @@
   color: #fafafa;
   text-shadow: 0 0 30px rgba(163, 230, 53, 0.35);
   white-space: nowrap;
+  z-index: 1;
+}
+.slice-brand span {
+  color: #a3e635;
 }
 
-.slice-half::after {
+/* the "screen" that burns away — cracks/gaps appear then it dissolves */
+.slice-burn {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(circle at 50% 45%, rgba(120, 30, 10, 0.0), rgba(10, 10, 10, 0.55) 60%, #050505 100%);
+  opacity: 0;
+  animation: sliceBurn var(--ash-dur) var(--ash-delay) ease forwards;
+}
+/* burn "fractures" — lines that bloom across the screen like cremation cracks */
+.slice-burn::before,
+.slice-burn::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 1px;
-  box-shadow: 0 0 22px 3px rgba(249, 115, 22, 0.8);
-  background: transparent;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(251, 113, 20, 0.8), transparent 40%),
+    radial-gradient(circle at 70% 65%, rgba(163, 230, 53, 0.6), transparent 45%),
+    radial-gradient(circle at 45% 80%, rgba(249, 115, 22, 0.7), transparent 50%);
+  background-repeat: no-repeat;
+  opacity: 0;
+}
+.slice-burn::before {
+  animation: sliceBurst var(--ash-dur) var(--ash-delay) linear forwards;
+}
+.slice-burn::after {
+  animation: sliceBurst var(--ash-dur) calc(var(--ash-delay) + var(--ash-dur) * 0.2) linear forwards;
 }
 
-.slice-half-top {
-  top: 0;
-  height: 50%;
-  background: #0b0b0b;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  animation: sliceSlideTop var(--slide-dur) var(--slide-delay) cubic-bezier(0.22, 1, 0.36, 1) both;
+/* embers drifting up as it burns */
+.slice-ember {
+  position: absolute;
+  left: var(--x);
+  top: var(--y0);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fbbf24 0%, #f97316 70%, transparent 100%);
+  box-shadow: 0 0 8px 2px rgba(249, 115, 22, 0.7);
+  z-index: 3;
+  opacity: 0;
+  animation: sliceEmber var(--d) var(--delay) ease-in infinite;
 }
-.slice-half-bottom {
-  bottom: 0;
-  height: 50%;
-  background: #0b0b0b;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  animation: sliceSlideBottom var(--slide-dur) var(--slide-delay) cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes sliceEmber {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(var(--s));
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), -40vh) scale(calc(var(--s) * 0.4));
+  }
 }
 
-@keyframes sliceSlideTop {
+@keyframes sliceBurn {
   0% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 0;
   }
-  55% {
-    transform: translate(-3%, -3%);
+  12% {
+    opacity: 1;
+  }
+  60% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
   }
   100% {
-    clip-path: polygon(0 0, 100% 0, 100% 0.4%, 0 0.4%);
+    clip-path: inset(18% 0 22% 0);
+    opacity: 0.85;
   }
 }
-@keyframes sliceSlideBottom {
+@keyframes sliceBurst {
   0% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(0.6);
+    opacity: 0;
   }
-  55% {
-    transform: translate(3%, 3%);
+  40% {
+    opacity: 0.9;
   }
   100% {
-    clip-path: polygon(0 99.6%, 100% 99.6%, 100% 100%, 0 100%);
+    transform: scale(1.6);
+    opacity: 0;
   }
 }
 
 /* the neon pathway trailing the blade */
 .slice-pathway {
   position: absolute;
-  z-index: 2;
+  z-index: 4;
   left: 0;
   right: 0;
   top: 50%;
@@ -105,7 +136,6 @@
   transform-origin: 100% 50%;
   animation: slicePath var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards;
 }
-
 @keyframes slicePath {
   from {
     transform: scaleX(0);
@@ -115,28 +145,27 @@
   }
 }
 
-/* the katana */
+/* the katana — sweeps diagonally fully off-screen, cutting corner to corner */
 .slice-katana {
   position: absolute;
-  z-index: 3;
-  top: 62%;
-  left: 88%;
+  z-index: 5;
+  right: -12%;
+  top: 8%;
   transform: rotate(24deg);
   opacity: 0;
   animation: sliceKatana var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards, sliceKatanaShine 1.6s linear forwards;
 }
-
 @keyframes sliceKatana {
   from {
-    transform: translate(40vw, -34vh) rotate(24deg);
+    transform: translate(120vw, -80vh) rotate(24deg);
     opacity: 0;
   }
-  10% {
+  8% {
     opacity: 1;
   }
   to {
-    transform: translate(-30vw, 26vh) rotate(24deg);
-    opacity: 0.6;
+    transform: translate(-120vw, 80vh) rotate(24deg);
+    opacity: 0.55;
   }
 }
 @keyframes sliceKatanaShine {
@@ -152,7 +181,7 @@
   position: absolute;
   right: 18px;
   bottom: 18px;
-  z-index: 4;
+  z-index: 6;
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(255, 255, 255, 0.06);
   color: #d4d4d8;

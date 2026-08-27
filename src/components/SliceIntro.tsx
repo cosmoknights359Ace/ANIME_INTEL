@@ -4,12 +4,23 @@ import { useEffect, useState } from "react";
 
 const SEEN_KEY = "animeintel:slice-seen";
 
-// The slice intro. First visit: full katana sweep + the site splitting into
-// two halves. Returning visits (same tab): a ~600ms quick slice.
+// The slice intro. First visit: full katana sweep + the site burning away
+// into ashes. Returning visits (same tab): a ~600ms quick slice.
 const TIMING = {
-  intro: { swe: 0.5, slideDelay: 0.32, slideDur: 0.6, fadeDelay: 2.0, fadeDur: 0.6 },
-  quick: { swe: 0.28, slideDelay: 0.16, slideDur: 0.26, fadeDelay: 0.55, fadeDur: 0.3 },
+  intro: { swe: 0.45, ashDelay: 0.5, ashDur: 1.0, fadeDelay: 1.55, fadeDur: 0.35 },
+  quick: { swe: 0.26, ashDelay: 0.26, ashDur: 0.32, fadeDelay: 0.6, fadeDur: 0.2 },
 };
+
+// Floating embers that drift up as the screen burns to ashes.
+const EMBERS = Array.from({ length: 28 }, (_, i) => {
+  const x = `${(i * 37 + 7) % 100}%`; // spread across the width
+  const y0 = `${12 + ((i * 53) % 72)}%`; // start height (burning region)
+  const drift = `${((i % 5) - 2) * 46}px`; // slight horizontal drift
+  const dur = `${1.0 + ((i * 29) % 70) / 100}s`;
+  const delay = `${(i * 7) % 60}ms`;
+  const scale = `${0.8 + ((i * 13) % 40) / 100}`;
+  return { "--x": x, "--y0": y0, "--drift": drift, "--d": dur, "--delay": delay, "--s": scale } as React.CSSProperties;
+});
 
 export default function SliceIntro() {
   const [variant, setVariant] = useState<"intro" | "quick">("intro");
@@ -44,8 +55,8 @@ export default function SliceIntro() {
   const t = TIMING[variant];
   const vars = {
     "--swe": `${t.swe}s`,
-    "--slide-delay": `${t.slideDelay}s`,
-    "--slide-dur": `${t.slideDur}s`,
+    "--ash-delay": `${t.ashDelay}s`,
+    "--ash-dur": `${t.ashDur}s`,
     "--fade-delay": `${t.fadeDelay}s`,
     "--fade-dur": `${t.fadeDur}s`,
   } as React.CSSProperties;
@@ -58,9 +69,16 @@ export default function SliceIntro() {
         if (e.target === e.currentTarget && e.animationName === "sliceFade") setGone(true);
       }}
     >
-      {/* the page, split into two halves */}
-      <div className="slice-half slice-half-top" aria-hidden />
-      <div className="slice-half slice-half-bottom" aria-hidden />
+      {/* the dark screen that burns to ashes after the slash */}
+      <div className="slice-brand" aria-hidden>
+        Anime<span>Intel</span>
+      </div>
+      <div className="slice-burn" aria-hidden />
+
+      {/* floating embers */}
+      {EMBERS.map((style, i) => (
+        <span key={i} className="slice-ember" style={style} aria-hidden />
+      ))}
 
       {/* the neon pathway the blade carves */}
       <div className="slice-pathway" aria-hidden />
@@ -76,13 +94,10 @@ export default function SliceIntro() {
             </linearGradient>
           </defs>
           <g stroke="none">
-            {/* handle */}
             <rect x="12" y="34" width="76" height="16" rx="6" fill="#161616" />
             <path d="M24 36 v12 M36 36 v12 M48 36 v12 M60 36 v12 M72 36 v12" stroke="#3a3a3a" strokeWidth="2" />
             <rect x="8" y="32" width="9" height="20" rx="2" fill="#0c0c0c" />
-            {/* guard */}
             <rect x="90" y="22" width="9" height="32" rx="2" fill="#111" stroke="#d4af37" strokeWidth="1" />
-            {/* blade */}
             <path d="M100 42 L352 42 L352 41 L104 39 Z" fill="url(#sliceBlade)" />
             <path d="M306 44 L352 42 L302 40 Z" fill="#ffffff" />
           </g>
