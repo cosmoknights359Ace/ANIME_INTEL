@@ -71,10 +71,7 @@ export default function SliceIntro() {
         if (e.target === e.currentTarget && e.animationName === "sliceFade") setGone(true);
       }}
     >
-      {/* the dark screen that burns to ashes after the slash */}
-      <div className="slice-brand" aria-hidden>
-        Anime<span>Intel</span>
-      </div>
+      {/* the dark screen that burns away into ashes after the slash */}
       <div className="slice-burn" aria-hidden />
 
       {/* floating embers */}

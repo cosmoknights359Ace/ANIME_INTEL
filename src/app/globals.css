@@ -17,24 +17,6 @@
   animation-delay: var(--fade-delay);
 }
 
-/* the brand — dimmed white, slowly consumed by the burn */
-.slice-brand {
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(2rem, 8vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #fafafa;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
-  white-space: nowrap;
-  z-index: 1;
-}
-.slice-brand span {
-  color: #f97316;
-}
-
 /* the "screen" that burns away — cracks/gaps appear then it dissolves */
 .slice-burn {
   position: absolute;
@@ -122,25 +104,26 @@
   }
 }
 
-/* the neon pathway trailing the blade — diagonal, crossing the full screen */
+/* the neon pathway trailing the blade — a diagonal that grows across the whole screen */
 .slice-pathway {
   position: absolute;
   z-index: 4;
   top: 50%;
-  left: -40vw;
-  width: 180vw;
+  left: 50%;
+  width: 160vw;
   height: 3px;
-  background: linear-gradient(90deg, transparent 0%, #f97316 8%, #fb923c 30%, #fbbf24 55%, #fff7cc 72%, transparent 100%);
+  margin-left: -80vw;
+  background: linear-gradient(90deg, transparent 0%, #f97316 8%, #fb923c 30%, #fbbf24 60%, #fff7cc 74%, transparent 100%);
   box-shadow: 0 0 26px 6px rgba(249, 115, 22, 0.8), 0 0 70px 18px rgba(251, 146, 60, 0.4);
-  transform-origin: 100% 50%;
+  transform-origin: 50% 50%;
   transform: rotate(27deg) scaleX(0);
   animation: slicePath var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards;
 }
 @keyframes slicePath {
-  from {
+  0% {
     transform: rotate(27deg) scaleX(0);
   }
-  to {
+  100% {
     transform: rotate(27deg) scaleX(1);
   }
 }
