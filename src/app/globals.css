@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/* ── Slice intro ────────────────────────────────────────────
+   A katana sweeps diagonally across a black void; its neon path
+   is highlighted, then the page splits into two halves that slide
+   apart along the cut and pull back together to reveal the site.
+   Animation durations come from CSS vars set on .slice-root by the
+   component (intro vs quick-slice timing). */
+
+.slice-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background: #050505;
+  opacity: 1;
+  animation: sliceFade var(--fade-dur) ease forwards;
+  animation-delay: var(--fade-delay);
+}
+
+.slice-half {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  filter: brightness(0.35);
+  transform-origin: center;
+}
+
+/* the visible "page" is the site snapshot — a stacked collage of the
+   brand wordmark + neon grid so it reads as the site itself */
+.slice-half::before {
+  content: "AnimeIntel";
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(2rem, 8vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fafafa;
+  text-shadow: 0 0 30px rgba(163, 230, 53, 0.35);
+  white-space: nowrap;
+}
+
+.slice-half::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  box-shadow: 0 0 22px 3px rgba(249, 115, 22, 0.8);
+  background: transparent;
+}
+
+.slice-half-top {
+  top: 0;
+  height: 50%;
+  background: #0b0b0b;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  animation: sliceSlideTop var(--slide-dur) var(--slide-delay) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.slice-half-bottom {
+  bottom: 0;
+  height: 50%;
+  background: #0b0b0b;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  animation: sliceSlideBottom var(--slide-dur) var(--slide-delay) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sliceSlideTop {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  55% {
+    transform: translate(-3%, -3%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 0.4%, 0 0.4%);
+  }
+}
+@keyframes sliceSlideBottom {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  55% {
+    transform: translate(3%, 3%);
+  }
+  100% {
+    clip-path: polygon(0 99.6%, 100% 99.6%, 100% 100%, 0 100%);
+  }
+}
+
+/* the neon pathway trailing the blade */
+.slice-pathway {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, #f97316, #a3e635);
+  box-shadow: 0 0 26px 6px rgba(249, 115, 22, 0.75), 0 0 60px 14px rgba(163, 230, 53, 0.35);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  animation: slicePath var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards;
+}
+
+@keyframes slicePath {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* the katana */
+.slice-katana {
+  position: absolute;
+  z-index: 3;
+  top: 62%;
+  left: 88%;
+  transform: rotate(24deg);
+  opacity: 0;
+  animation: sliceKatana var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards, sliceKatanaShine 1.6s linear forwards;
+}
+
+@keyframes sliceKatana {
+  from {
+    transform: translate(40vw, -34vh) rotate(24deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(-30vw, 26vh) rotate(24deg);
+    opacity: 0.6;
+  }
+}
+@keyframes sliceKatanaShine {
+  0% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(0.5);
+  }
+}
+
+.slice-skip {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 4;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: #d4d4d8;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.slice-skip:hover {
+  background: rgba(163, 230, 53, 0.18);
+  color: #ecfccb;
+}
+
+/* Fade the whole thing out into the page */
+@keyframes sliceFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

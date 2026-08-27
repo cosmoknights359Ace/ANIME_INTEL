@@ -1,0 +1,19 @@
+{
+  "franchise": "Monogatari",
+  "appliesTo": [5081, 11597, 15689, 17074, 20593, 20918, 21262, 21520, 21745, 100815, 9260, 21399, 21400],
+  "steps": [
+    { "animeId": 5081, "note": "Start here — Bakemonogatari" },
+    { "animeId": 11597, "note": "Nisemonogatari" },
+    { "animeId": 15689, "note": "Nekomonogatari: Kuro (prequel story)" },
+    { "animeId": 17074, "note": "Monogatari Series: Second Season" },
+    { "animeId": 20593, "note": "Hanamonogatari" },
+    { "animeId": 20918, "note": "Tsukimonogatari" },
+    { "animeId": 21262, "note": "Owarimonogatari" },
+    { "animeId": 21520, "role": "optional", "note": "Koyomimonogatari — side vignettes, watch before Owari (Ge)" },
+    { "animeId": 21745, "note": "Owarimonogatari (Ge) — Season 2" },
+    { "animeId": 100815, "note": "Zoku Owarimonogatari — the epilogue" },
+    { "animeId": 9260, "role": "optional", "note": "Kizumonogatari I — origin story, best watched late (movie)" },
+    { "animeId": 21399, "role": "optional", "note": "Kizumonogatari II (movie)" },
+    { "animeId": 21400, "role": "optional", "note": "Kizumonogatari III (movie)" }
+  ]
+}

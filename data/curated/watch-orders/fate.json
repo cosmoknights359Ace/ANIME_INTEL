@@ -1,0 +1,14 @@
+{
+  "franchise": "Fate",
+  "appliesTo": [10087, 11741, 19603, 20792, 20791, 21718, 21719, 356],
+  "steps": [
+    { "animeId": 10087, "note": "Start here — the prequel that sets everything up" },
+    { "animeId": 11741, "note": "Fate/Zero 2nd Season" },
+    { "animeId": 19603, "note": "Fate/stay night: Unlimited Blade Works" },
+    { "animeId": 20792, "note": "UBW 2nd Season" },
+    { "animeId": 20791, "note": "Heaven's Feel I: presage flower (movie)" },
+    { "animeId": 21718, "note": "Heaven's Feel II: lost butterfly (movie)" },
+    { "animeId": 21719, "note": "Heaven's Feel III: spring song (movie)" },
+    { "animeId": 356, "role": "optional", "note": "Optional: the 2006 original, rougher adaptation" }
+  ]
+}
