@@ -7,8 +7,10 @@ const SEEN_KEY = "animeintel:slice-seen";
 // The slice intro. First visit: full katana sweep + the site burning away
 // into ashes. Returning visits (same tab): a ~600ms quick slice.
 const TIMING = {
-  intro: { swe: 0.45, ashDelay: 0.5, ashDur: 1.0, fadeDelay: 1.55, fadeDur: 0.35 },
-  quick: { swe: 0.26, ashDelay: 0.26, ashDur: 0.32, fadeDelay: 0.6, fadeDur: 0.2 },
+  // slash (swe) → dramatic beat → the site appears (fade). Introduces a
+  // deliberate pause after the cut so the reveal feels like its own moment.
+  intro: { swe: 0.5, ashDelay: 0.62, ashDur: 0.5, fadeDelay: 1.5, fadeDur: 0.5 },
+  quick: { swe: 0.22, ashDelay: 0.3, ashDur: 0.3, fadeDelay: 0.65, fadeDur: 0.25 },
 };
 
 // Floating embers that drift up as the screen burns to ashes.

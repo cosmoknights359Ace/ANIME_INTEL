@@ -17,7 +17,7 @@
   animation-delay: var(--fade-delay);
 }
 
-/* the brand — dimmed, getting consumed by the burn */
+/* the brand — dimmed white, slowly consumed by the burn */
 .slice-brand {
   position: absolute;
   left: 50%;
@@ -27,12 +27,12 @@
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #fafafa;
-  text-shadow: 0 0 30px rgba(163, 230, 53, 0.35);
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
   white-space: nowrap;
   z-index: 1;
 }
 .slice-brand span {
-  color: #a3e635;
+  color: #f97316;
 }
 
 /* the "screen" that burns away — cracks/gaps appear then it dissolves */
@@ -40,20 +40,20 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: radial-gradient(circle at 50% 45%, rgba(120, 30, 10, 0.0), rgba(10, 10, 10, 0.55) 60%, #050505 100%);
+  background: radial-gradient(circle at 50% 45%, rgba(50, 15, 5, 0.35), rgba(10, 8, 6, 0.6) 60%, #050505 100%);
   opacity: 0;
   animation: sliceBurn var(--ash-dur) var(--ash-delay) ease forwards;
 }
-/* burn "fractures" — lines that bloom across the screen like cremation cracks */
+/* burn "fractures" — warm ember blooms that glow across the screen */
 .slice-burn::before,
 .slice-burn::after {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(251, 113, 20, 0.8), transparent 40%),
-    radial-gradient(circle at 70% 65%, rgba(163, 230, 53, 0.6), transparent 45%),
-    radial-gradient(circle at 45% 80%, rgba(249, 115, 22, 0.7), transparent 50%);
+    radial-gradient(circle at 20% 30%, rgba(251, 113, 20, 0.55), transparent 40%),
+    radial-gradient(circle at 70% 65%, rgba(249, 115, 22, 0.45), transparent 45%),
+    radial-gradient(circle at 45% 80%, rgba(255, 170, 90, 0.4), transparent 50%);
   background-repeat: no-repeat;
   opacity: 0;
 }
@@ -72,7 +72,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: radial-gradient(circle, #fbbf24 0%, #f97316 70%, transparent 100%);
+  background: radial-gradient(circle, #fecaca 0%, #f97316 60%, transparent 100%);
   box-shadow: 0 0 8px 2px rgba(249, 115, 22, 0.7);
   z-index: 3;
   opacity: 0;
@@ -122,50 +122,60 @@
   }
 }
 
-/* the neon pathway trailing the blade */
+/* the neon pathway trailing the blade — diagonal, crossing the full screen */
 .slice-pathway {
   position: absolute;
   z-index: 4;
-  left: 0;
-  right: 0;
   top: 50%;
-  height: 2px;
-  background: linear-gradient(90deg, #f97316, #a3e635);
-  box-shadow: 0 0 26px 6px rgba(249, 115, 22, 0.75), 0 0 60px 14px rgba(163, 230, 53, 0.35);
-  transform: scaleX(0);
+  left: -40vw;
+  width: 180vw;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #f97316 8%, #fb923c 30%, #fbbf24 55%, #fff7cc 72%, transparent 100%);
+  box-shadow: 0 0 26px 6px rgba(249, 115, 22, 0.8), 0 0 70px 18px rgba(251, 146, 60, 0.4);
   transform-origin: 100% 50%;
+  transform: rotate(27deg) scaleX(0);
   animation: slicePath var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards;
 }
 @keyframes slicePath {
   from {
-    transform: scaleX(0);
+    transform: rotate(27deg) scaleX(0);
   }
   to {
-    transform: scaleX(1);
+    transform: rotate(27deg) scaleX(1);
   }
 }
 
-/* the katana — sweeps diagonally fully off-screen, cutting corner to corner */
+/* the katana — sweeps diagonally across the full screen, along the pathway */
 .slice-katana {
   position: absolute;
   z-index: 5;
-  right: -12%;
-  top: 8%;
-  transform: rotate(24deg);
+  top: -10vh;
+  left: 50vw;
+  width: 64vw;
+  height: 40px;
+  margin-left: -32vw;
+  transform-origin: 50% 50%;
   opacity: 0;
-  animation: sliceKatana var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards, sliceKatanaShine 1.6s linear forwards;
+  animation:
+    sliceKatana var(--swe) cubic-bezier(0.35, 0, 0.15, 1) forwards,
+    sliceKatanaShine 1.6s linear forwards;
+}
+.slice-katana svg {
+  height: 100%;
+  width: 100%;
 }
 @keyframes sliceKatana {
-  from {
-    transform: translate(120vw, -80vh) rotate(24deg);
+  0% {
+    /* start above-left, travel down-right along the +27deg diagonal */
+    transform: translate(-85vw, -110vh) rotate(27deg);
     opacity: 0;
   }
-  8% {
+  12% {
     opacity: 1;
   }
-  to {
-    transform: translate(-120vw, 80vh) rotate(24deg);
-    opacity: 0.55;
+  100% {
+    transform: translate(85vw, 110vh) rotate(27deg);
+    opacity: 0.9;
   }
 }
 @keyframes sliceKatanaShine {
