@@ -11,10 +11,33 @@
   inset: 0;
   z-index: 9999;
   overflow: hidden;
-  background: #050505;
+  /* spec: black with a dark-brown gradient toward the right/upper area */
+  background: radial-gradient(circle at 80% 20%, #1a0d08, #000000);
   opacity: 1;
   animation: sliceFade var(--fade-dur) ease forwards;
   animation-delay: var(--fade-delay);
+}
+
+/* the wordmark — per design spec: orange, bold condensed italic uppercase */
+.slice-wordmark {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  font-weight: 900;
+  font-stretch: condensed;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.4rem, 9vw, 6rem);
+  color: #ff6b1a;
+  text-shadow: 0 0 12px #ffe5cc, 0 0 34px #ff6b1a;
+  white-space: nowrap;
+  z-index: 1;
+}
+.slice-wordmark span {
+  color: #ff6b1a;
+  text-shadow: 0 0 12px #ffe5cc, 0 0 34px #ff6b1a;
 }
 
 /* the "screen" that burns away — cracks/gaps appear then it dissolves */
@@ -104,7 +127,7 @@
   }
 }
 
-/* the neon pathway trailing the blade — a diagonal that grows across the whole screen */
+/* the neon pathway trailing the blade — lower-left → upper-right diagonal */
 .slice-pathway {
   position: absolute;
   z-index: 4;
@@ -113,18 +136,19 @@
   width: 160vw;
   height: 3px;
   margin-left: -80vw;
-  background: linear-gradient(90deg, transparent 0%, #f97316 8%, #fb923c 30%, #fbbf24 60%, #fff7cc 74%, transparent 100%);
-  box-shadow: 0 0 26px 6px rgba(249, 115, 22, 0.8), 0 0 70px 18px rgba(251, 146, 60, 0.4);
+  background: linear-gradient(90deg, transparent 0%, #ff8533 6%, #ff6b1a 22%, #fff5e6 45%, #ffeddd 50%, #ff6b1a 78%, #ff8533 94%, transparent 100%);
+  filter: blur(1px) drop-shadow(0 0 14px #ff8533) drop-shadow(0 0 3px #fff5e6);
+  box-shadow: 0 0 30px 6px rgba(255, 107, 26, 0.55);
   transform-origin: 50% 50%;
-  transform: rotate(27deg) scaleX(0);
+  transform: rotate(-50deg) scaleX(0);
   animation: slicePath var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards;
 }
 @keyframes slicePath {
-  0% {
-    transform: rotate(27deg) scaleX(0);
+  from {
+    transform: rotate(-50deg) scaleX(0);
   }
-  100% {
-    transform: rotate(27deg) scaleX(1);
+  to {
+    transform: rotate(-50deg) scaleX(1);
   }
 }
 
@@ -149,15 +173,15 @@
 }
 @keyframes sliceKatana {
   0% {
-    /* start above-left, travel down-right along the +27deg diagonal */
-    transform: translate(-85vw, -110vh) rotate(27deg);
+    /* start bottom-left, travel up-right along the -50deg diagonal */
+    transform: translate(-90vw, 110vh) rotate(-50deg);
     opacity: 0;
   }
   12% {
     opacity: 1;
   }
   100% {
-    transform: translate(85vw, 110vh) rotate(27deg);
+    transform: translate(90vw, -110vh) rotate(-50deg);
     opacity: 0.9;
   }
 }

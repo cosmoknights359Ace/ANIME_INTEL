@@ -74,12 +74,17 @@ export default function SliceIntro() {
       {/* the dark screen that burns away into ashes after the slash */}
       <div className="slice-burn" aria-hidden />
 
+      {/* the wordmark, per the design spec (55% from top center) */}
+      <div className="slice-wordmark" aria-hidden>
+        Anime<span>Intel</span>
+      </div>
+
       {/* floating embers */}
       {EMBERS.map((style, i) => (
         <span key={i} className="slice-ember" style={style} aria-hidden />
       ))}
 
-      {/* the neon pathway the blade carves */}
+      {/* the neon pathway the blade carves — lower-left → upper-right */}
       <div className="slice-pathway" aria-hidden />
 
       {/* the katana */}
@@ -87,9 +92,9 @@ export default function SliceIntro() {
         <svg viewBox="0 0 360 60" className="w-72 sm:w-80">
           <defs>
             <linearGradient id="sliceBlade" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#cfe0ff" />
-              <stop offset="70%" stopColor="#ffffff" />
-              <stop offset="100%" stopColor="#eaf2ff" />
+              <stop offset="0%" stopColor="#ffc29e" />
+              <stop offset="55%" stopColor="#fff5e6" />
+              <stop offset="100%" stopColor="#ffc29e" />
             </linearGradient>
           </defs>
           <g stroke="none">
