@@ -52,39 +52,29 @@ function Katana() {
   useFrame((state) => {
     if (!group.current) return;
     if (start.current === 0) start.current = state.clock.elapsedTime;
-    const t = state.clock.elapsedTime - start.current; // seconds since mount
+    const t = state.clock.elapsedTime - start.current;
 
-    // The blade sweeps in sync with the CSS slash (--swe ≈ 1.5s) along the
-    // -50deg diagonal, from lower-left (off-screen) to upper-right (off-screen).
-    const dur = 1.5; // matches TIMING.intro.swe
-    const angle = THREE.MathUtils.degToRad(-50); // lower-left -> upper-right
+    // Direction vector: screen bottom-left -> top-right. In three.js, +y is up
+    // on screen, so a positive angle means up-right. Use +50deg to MATCH the
+    // CSS slash (rotate(-50deg) in screen-y-down terms is the same slope).
+    const ANGLE = THREE.MathUtils.degToRad(50);
+    const dirX = Math.cos(ANGLE);
+    const dirY = Math.sin(ANGLE); // = (cos50, sin50) ~ (0.64, 0.77) = right+up
 
-    // Distance to fully cross the screen along the diagonal.
-    const span = Math.hypot(viewport.width, viewport.height) * 1.2;
-
-    // Progress 0 → 1 across the sweep duration (clamped). easeOutCubic so it
-    // starts snappy and glides out — a real slash motion, not a blur.
+    const dur = 1.5;
+    const span = Math.hypot(viewport.width, viewport.height) * 1.25;
     const raw = Math.min(t / dur, 1);
     const ease = 1 - Math.pow(1 - raw, 3);
+    const dist = (ease - 0.5) * span;
 
-    // Fade in quickly at the very start, fade out at the very end.
+    group.current.position.set(dirX * dist, dirY * dist, 0);
+    // Blade runs along local +Y (per GLB bounds); align it with the direction.
+    group.current.rotation.z = ANGLE;
+    group.current.rotation.x = 0.25;
+
     let opacity = 1;
     if (t < 0.15) opacity = t / 0.15;
     if (t > dur) opacity = Math.max(0, 1 - (t - dur) / 0.3);
-
-    // Position along the diagonal, centered at t = dur/2.
-    const dist = (ease - 0.5) * span;
-    const x = Math.cos(angle) * dist;
-    const y = Math.sin(angle) * dist;
-    group.current.position.set(x, y, 0);
-
-    // The katana's blade runs along its local +Y axis (seen in the model
-    // bounds). Rotate Z by the path angle so the blade points along the
-    // -50deg slash direction like a drawn cut.
-    group.current.rotation.z = angle;
-    // subtle roll toward camera for depth
-    group.current.rotation.x = 0.25;
-
     group.current.traverse((o: any) => {
       if (o.isMesh && o.material) {
         o.material.transparent = true;
