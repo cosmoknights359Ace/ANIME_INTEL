@@ -25,11 +25,11 @@ export default function SideNav() {
 
   return (
     <>
-      {/* 3-bar trigger, nudged off the left edge, vertically centered */}
+      {/* 3-bar trigger, fixed top-left corner */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Open menu"
-        className="group fixed left-0 top-1/2 z-40 -translate-y-1/2 rounded-r-lg border border-zinc-800 bg-zinc-950/90 px-2.5 py-4 backdrop-blur shadow-lg transition hover:border-lime-400/60"
+        className="group fixed left-3 top-[4.5rem] z-40 rounded-lg border border-zinc-800 bg-zinc-950/90 p-2.5 backdrop-blur shadow-lg transition hover:border-lime-400/60"
       >
         <span className="flex flex-col gap-1.5">
           <span className="h-[2px] w-4 rounded bg-zinc-300 transition group-hover:bg-lime-300" />

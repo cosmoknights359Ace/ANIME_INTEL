@@ -63,34 +63,12 @@
   }
 }
 
-/* blinking caret after the typed text */
-.slice-wordmark::after {
-  content: "";
-  position: relative;
-  display: inline-block;
-  width: 0.08em;
-  height: 1em;
-  margin-left: 0.12em;
-  vertical-align: -0.05em;
-  background: #f2b888;
-  box-shadow: 0 0 8px #f2b888;
-  animation: sliceCaret 0.85s steps(1) infinite;
-}
 @keyframes sliceType {
   from {
     clip-path: inset(0 100% 0 0);
   }
   to {
     clip-path: inset(0 0 0 0);
-  }
-}
-@keyframes sliceCaret {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
   }
 }
 
