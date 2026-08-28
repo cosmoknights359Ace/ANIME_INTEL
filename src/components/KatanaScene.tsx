@@ -54,33 +54,37 @@ function Katana() {
     if (start.current === 0) start.current = state.clock.elapsedTime;
     const t = state.clock.elapsedTime - start.current; // seconds since mount
 
-    // Sweep params (matches TIMING.intro.swe ≈ 1.5s)
-    const dur = 1.5;
-    const hold = 0.55; // linger before it exits
-    const angle = THREE.MathUtils.degToRad(-50);
+    // The blade sweeps in sync with the CSS slash (--swe ≈ 1.5s) along the
+    // -50deg diagonal, from lower-left (off-screen) to upper-right (off-screen).
+    const dur = 1.5; // matches TIMING.intro.swe
+    const angle = THREE.MathUtils.degToRad(-50); // lower-left -> upper-right
 
-    // Travel along the diagonal from lower-left offscreen to upper-right offscreen
-    const span = Math.hypot(viewport.width, viewport.height) * 1.15; // distance to cover
-    let p = Math.min(t / dur, 1); // 0→1 over the sweep
-    if (t > dur + hold) {
-      // exit offscreen quickly after the hold
-      const exitT = (t - dur - hold) / 0.35;
-      p = 1 + exitT * 0.6;
-    }
-    const ease = t <= dur ? 1 - Math.pow(1 - p, 3) : p; // easeOut during sweep
+    // Distance to fully cross the screen along the diagonal.
+    const span = Math.hypot(viewport.width, viewport.height) * 1.2;
+
+    // Progress 0 → 1 across the sweep duration (clamped). easeOutCubic so it
+    // starts snappy and glides out — a real slash motion, not a blur.
+    const raw = Math.min(t / dur, 1);
+    const ease = 1 - Math.pow(1 - raw, 3);
+
+    // Fade in quickly at the very start, fade out at the very end.
+    let opacity = 1;
+    if (t < 0.15) opacity = t / 0.15;
+    if (t > dur) opacity = Math.max(0, 1 - (t - dur) / 0.3);
+
+    // Position along the diagonal, centered at t = dur/2.
     const dist = (ease - 0.5) * span;
     const x = Math.cos(angle) * dist;
     const y = Math.sin(angle) * dist;
     group.current.position.set(x, y, 0);
 
-    // Orient the blade perpendicular to the path (like a katana slash).
-    group.current.rotation.z = angle - Math.PI / 2;
-    // Slight blade roll for depth as it sweeps.
+    // The katana's blade runs along its local +Y axis (seen in the model
+    // bounds). Rotate Z by the path angle so the blade points along the
+    // -50deg slash direction like a drawn cut.
+    group.current.rotation.z = angle;
+    // subtle roll toward camera for depth
     group.current.rotation.x = 0.25;
 
-    // Fade in at start and fade out on exit.
-    const opacity =
-      t < 0.1 ? t / 0.1 : t > dur + hold ? Math.max(0, 1 - (t - dur - hold) / 0.35) : 1;
     group.current.traverse((o: any) => {
       if (o.isMesh && o.material) {
         o.material.transparent = true;
