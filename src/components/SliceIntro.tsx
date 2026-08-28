@@ -63,6 +63,7 @@ export default function SliceIntro() {
       {/* the wordmark, typed out as the screen splits apart */}
       <div className="slice-wordmark" aria-hidden>
         Anime Intel
+        <span className="slice-kana">アニメ・インテル</span>
       </div>
 
       {/* the dark screen, in two halves that slide apart along the slash */}

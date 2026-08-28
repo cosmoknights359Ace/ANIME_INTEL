@@ -6,6 +6,7 @@ import { getWatchOrder } from "@/lib/watchOrder";
 import Timeline from "@/components/Timeline";
 import ListButton, { ProgressControl } from "@/components/ListButton";
 import NextEpisode from "@/components/NextEpisode";
+import AnimeStickyHeader from "@/components/AnimeStickyHeader";
 
 export const revalidate = 3600;
 
@@ -42,6 +43,9 @@ export default async function AnimePage({
 
   return (
     <div className="space-y-10">
+      {/* sticky mini-header: poster + rating + add-to-list while scrolling */}
+      <AnimeStickyHeader anime={anime} />
+
       {/* Above the fold: what is it, is it good, where do I watch */}
       <section className="flex flex-col gap-8 sm:flex-row">
         <div className="relative aspect-[2/3] w-48 shrink-0 overflow-hidden rounded-xl bg-zinc-800">

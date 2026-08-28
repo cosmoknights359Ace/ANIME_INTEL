@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Zen_Kurenaido } from "next/font/google";
 import Link from "next/link";
 import SliceIntro from "@/components/SliceIntro";
+import SideNav from "@/components/SideNav";
 import "./globals.css";
 
 const paper = Zen_Kurenaido({ weight: "400", subsets: ["latin"], variable: "--font-paper" });
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark">
       <body className={`${paper.variable} flex min-h-screen flex-col bg-zinc-950 text-zinc-100 antialiased`}>
         <SliceIntro />
+        <SideNav />
         <header>
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
             <Link href="/" className="text-lg font-bold tracking-tight">
