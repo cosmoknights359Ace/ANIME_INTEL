@@ -56,8 +56,12 @@ apart → "ANIME INTEL" types out (brush font) with a katakana ghost subtitle
   `/api/search` `/api/genre` accept `p` & `limit`; `<LoadMore endpoint>` client
   component pages both. Search dropdown debounce **250ms** (limit 12).
 - **Random anime**: `/api/random` over top-200 pool; <RandomButton> on home hero.
-- **Discover filters**: results step has genre + min-score + sort selects;
-  `DiscoverFilters` re-run with genre narrowing + sort (score vs popular).
+- **Discover filters**: genre + min-score + sort selects re-run the query.
+- **Covers 720p**: `SUMMARY_FIELDS` now requests `coverImage.extraLarge`
+  (≈640×960) — AnimeCard + sticky header upgraded automatically.
+- **Intro overlap fix**: `sliceType`/`sliceKana` now delayed until split halves
+  fully open (title no longer types while slash/halves are still moving).
+- **Skeletons**: new `SkeletonCard/SkeletonGrid` used in LoadMore + Discover.
 - **AnimeStickyHeader** on `/anime/[id]`: fixed bar with poster/rating/ListButton
   once scrolled past the hero.
 - **SideNav**: 3-bar button fixed at **top-left corner** (left-3, top ~4.5rem) →
