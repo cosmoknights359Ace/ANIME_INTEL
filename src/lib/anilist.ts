@@ -226,6 +226,8 @@ export interface DiscoverFilters {
   maxEpisodes?: number; // undefined = any length
   limit?: number;
   startersOnly?: boolean; // drop sequels — only franchise entry points
+  genre?: string | null; // optional narrow genre override
+  sort?: "score" | "popular";
 }
 
 export async function discoverAnime(f: DiscoverFilters): Promise<AnimeSummary[]> {
@@ -236,8 +238,11 @@ export async function discoverAnime(f: DiscoverFilters): Promise<AnimeSummary[]>
   // genre_in and tag_in can't be OR-combined in one query, so query each
   // mood tag separately and merge. AniList tags contain spaces ("Battle
   // Royale") which media(search:) tokenizes into AND — wrong for us.
+  const tags = f.genre ? [f.genre] : f.tags; // genre narrows to a single tag
+  const sort =
+    f.sort === "popular" ? "POPULARITY_DESC" : "SCORE_DESC";
   const perTag = await Promise.all(
-    f.tags.map((tag) => {
+    tags.map((tag) => {
       // AniList rejects explicit nulls for optional args — omit them instead
       const variables: Record<string, unknown> = { g: [tag], p: f.limit ?? 20 };
       if (f.format) variables.f = f.format;
@@ -252,7 +257,7 @@ export async function discoverAnime(f: DiscoverFilters): Promise<AnimeSummary[]>
               format: $f
               averageScore_greater: $s
               episodes_lesser: $e
-              sort: [SCORE_DESC, POPULARITY_DESC]
+              sort: ${sort}
             ) {
               ${SUMMARY_FIELDS}
               relations { edges { relationType } }
@@ -279,9 +284,9 @@ export async function discoverAnime(f: DiscoverFilters): Promise<AnimeSummary[]>
       if (!seen.has(s.id)) seen.set(s.id, s);
     }
   }
-  const results = [...seen.values()]
-    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-    .slice(0, f.limit ?? 20);
+  // AniList already applies the server-side sort (score or popularity),
+  // so we URL-dedupe and keep only `limit` of the top results.
+  const results = [...seen.values()].slice(0, f.limit ?? 20);
   cacheSet(key, results, TTL.top);
   return results;
 }

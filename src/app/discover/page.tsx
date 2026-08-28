@@ -8,24 +8,43 @@ import { MOODS, LENGTHS } from "@/lib/moods";
 
 type Step = "mood" | "length" | "results";
 
+const GENRES = ["Action", "Adventure", "Drama", "Fantasy", "Sci-Fi", "Romance", "Comedy", "Thriller"];
+const SCORE_MIN = [0, 50, 70, 80, 90];
+
 export default function DiscoverPage() {
   const [step, setStep] = useState<Step>("mood");
   const [mood, setMood] = useState<string | null>(null);
-  const [length, setLength] = useState<string>("any");
-  const [results, setResults] = useState<AnimeSummary[]>([]);
   const [moodLabel, setMoodLabel] = useState("");
+  const [results, setResults] = useState<AnimeSummary[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [pickedLength, setPickedLength] = useState<string | null>(null);
   const [startersOnly, setStartersOnly] = useState(true);
 
-  async function pickLength(lengthId: string) {
-    setLength(lengthId);
-    setPickedLength(lengthId);
+  // Refine filters
+  const [genre, setGenre] = useState<string | null>(null);
+  const [minScore, setMinScore] = useState(70);
+  const [sort, setSort] = useState<"score" | "popular">("score");
+
+  async function run(
+    moodId: string,
+    lengthId: string,
+    genreId: string | null,
+    s: number,
+    sortBy: "score" | "popular"
+  ) {
     setLoading(true);
     setStep("results");
     try {
-      const res = await fetch(`/api/discover?mood=${mood}&length=${lengthId}&starters=${startersOnly ? 1 : 0}`);
+      const params = new URLSearchParams({
+        mood: moodId,
+        length: lengthId,
+        starters: startersOnly ? "1" : "0",
+        minScore: String(s),
+        sort: sortBy,
+      });
+      if (genreId) params.set("genre", genreId);
+      const res = await fetch(`/api/discover?${params}`);
       const data = await res.json();
       setResults(data.results ?? []);
       setMoodLabel(data.mood ?? "");
@@ -36,12 +55,40 @@ export default function DiscoverPage() {
     }
   }
 
+  function pickMood(id: string, label: string) {
+    setMood(id);
+    setMoodLabel(label);
+    setStep("length");
+  }
+
+  function pickLength(lengthId: string) {
+    setPickedLength(lengthId);
+    run(mood!, lengthId, genre, minScore, sort);
+  }
+
+  function filterGenre(g: string | null) {
+    setGenre(g);
+    run(mood!, pickedLength!, g, minScore, sort);
+  }
+
+  function filterScore(s: number) {
+    setMinScore(s);
+    run(mood!, pickedLength!, genre, s, sort);
+  }
+
+  function filterSort(v: "score" | "popular") {
+    setSort(v);
+    run(mood!, pickedLength!, genre, minScore, v);
+  }
+
   function restart() {
     setStep("mood");
     setMood(null);
-    setLength("any");
     setPickedLength(null);
     setResults([]);
+    setGenre(null);
+    setMinScore(70);
+    setSort("score");
   }
 
   return (
@@ -68,10 +115,7 @@ export default function DiscoverPage() {
             {MOODS.map((m) => (
               <button
                 key={m.id}
-                onClick={() => {
-                  setMood(m.id);
-                  setStep("length");
-                }}
+                onClick={() => pickMood(m.id, m.label)}
                 className={`group flex flex-col items-center gap-2 rounded-xl p-5 ring-1 transition ${
                   mood === m.id
                     ? "bg-lime-400/10 ring-2 ring-lime-400 shadow-[0_0_20px_rgba(163,230,53,0.25)]"
@@ -121,21 +165,53 @@ export default function DiscoverPage() {
 
       {step === "results" && (
         <section>
-          <div className="mb-6 text-center">
+          <div className="mb-4 text-center">
             <h1 className="text-3xl font-bold">
               {loading ? "Finding your anime…" : `${moodLabel} picks`}
             </h1>
-            {!loading && (
-              <button onClick={restart} className="mt-2 text-sm text-lime-400 hover:underline">
-                ← Start over
-              </button>
-            )}
+            <button onClick={restart} className="mt-2 text-sm text-lime-400 hover:underline">
+              ← Start over
+            </button>
           </div>
+
+          {/* Filters */}
+          <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
+            <select
+              value={genre ?? ""}
+              onChange={(e) => filterGenre(e.target.value || null)}
+              className="rounded-lg bg-zinc-900 px-3 py-2 text-sm ring-1 ring-zinc-700 focus:outline-none"
+            >
+              <option value="">Any genre</option>
+              {GENRES.map((g) => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
+            <select
+              value={minScore}
+              onChange={(e) => filterScore(Number(e.target.value))}
+              className="rounded-lg bg-zinc-900 px-3 py-2 text-sm ring-1 ring-zinc-700 focus:outline-none"
+            >
+              {SCORE_MIN.map((s) => (
+                <option key={s} value={s}>
+                  {s === 0 ? "Any score" : `${s}+ score`}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sort}
+              onChange={(e) => filterSort(e.target.value as "score" | "popular")}
+              className="rounded-lg bg-zinc-900 px-3 py-2 text-sm ring-1 ring-zinc-700 focus:outline-none"
+            >
+              <option value="score">Sort: top rated</option>
+              <option value="popular">Sort: most popular</option>
+            </select>
+          </div>
+
           {loading ? (
             <GojoLoader text="Domain expansion! Finding your anime…" />
           ) : results.length === 0 ? (
             <p className="py-20 text-center text-zinc-500">
-              Nothing matched — try a different vibe or length.
+              Nothing matched — loosen the filters.
             </p>
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">

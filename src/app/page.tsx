@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "@/components/SearchBar";
 import Carousel from "@/components/Carousel";
+import RandomButton from "@/components/RandomButton";
 import { getTopAnime, getSeasonAnime } from "@/lib/anilist";
 
 export const revalidate = 3600;
@@ -51,6 +52,7 @@ export default async function Home() {
         >
           Not sure? Find your next watch →
         </Link>
+        <RandomButton />
       </section>
 
       <section>

@@ -5,6 +5,11 @@ import { MOODS, LENGTHS } from "@/lib/moods";
 export async function GET(req: NextRequest) {
   const moodId = req.nextUrl.searchParams.get("mood") ?? "";
   const lengthId = req.nextUrl.searchParams.get("length") ?? "any";
+  const genre = req.nextUrl.searchParams.get("genre")?.trim() || null;
+  const sort = (req.nextUrl.searchParams.get("sort") === "popular" ? "popular" : "score") as
+    | "popular"
+    | "score";
+  const minScore = Math.max(0, Number(req.nextUrl.searchParams.get("minScore") ?? 70));
 
   const mood = MOODS.find((m) => m.id === moodId);
   const length = LENGTHS.find((l) => l.id === lengthId) ?? LENGTHS[0];
@@ -16,9 +21,11 @@ export async function GET(req: NextRequest) {
 
   const results = await discoverAnime({
     tags: mood.tags,
+    genre,
     format: length.format,
     maxEpisodes: length.maxEpisodes,
-    minScore: 70,
+    minScore,
+    sort,
     limit: 24,
     startersOnly,
   });
