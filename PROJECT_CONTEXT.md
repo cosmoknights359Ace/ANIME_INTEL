@@ -54,8 +54,10 @@ apart → "ANIME INTEL" types out (brush font) with a katakana ghost subtitle
   Enter jumps to top result.
 - **AnimeStickyHeader** on `/anime/[id]`: fixed bar with poster/rating/ListButton
   once scrolled past the hero.
-- **SideNav**: left-edge 3-bar button → slide-in drawer with Home/Discover/MyList
-  + genre quick-links. Mounted in layout.
+- **SideNav**: 3-bar button fixed at **top-left corner** (left-3, top ~4.5rem) →
+  slide-in drawer with Home/Discover/MyList + genre quick-links. Mounted in layout.
+- Intro wordmark **blinking `::after` caret removed** (it rendered as a dangling
+  dash after the kana subtitle was added).
 
 ## Status / shipping source of truth
 - Git history is the source of truth for what's shipped. Confirm against `git log`.
