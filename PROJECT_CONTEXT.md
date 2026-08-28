@@ -34,24 +34,28 @@ directors, episode duration, streaming availability, related anime, popularity/r
 - `src/components/ListButton.tsx` (`+ ProgressControl`), `AnimeCard.tsx`, `Carousel.tsx`, `Timeline.tsx`, `SearchBar.tsx`, `NextEpisode.tsx`.
 - Pages: `/` (hero+search, top rated, airing this season), `/anime/[id]`, `/mylist`, `/discover`, `/genre/[genre]`.
 
-## SliceIntro loader — CURRENT STATE (built up over many iterations)
-The intro movie: **dark canvas → slow diagonal katana slash → "ANIME INTEL" typed out
-with brush font → beat → site fades in.**
-- `TIMING` in `SliceIntro.tsx`: `intro { swe:1.5s, ashDelay:1.7s, ashDur:0.4s, fadeDelay:3.2s, fadeDur:0.5s }`, `quick { swe:0.22,... }`.
-- Sequence: diagonal slash (~1.5s, lower-left→upper-right, ~-50°), then "Anime Intel"
-  wordmark types in, then the overlay fades at ~3.2s.
-- **Wordmark**: thin Japanese brush-style font **Zen Kurenaido** (loaded in `layout.tsx`
-  as `--font-paper`, `next/font/google`). Revealed with a **typewriter effect** —
-  `clip-path: inset(0 100% 0 0)` → `inset(0 0 0 0)` on a **fixed-width centered box**
-  with `steps()`, so it types in place without shifting. Warm paper color `#f3d0b0`
-  with soft orange-ink glow + blinking caret (`.slice-wordmark::after`).
-- **Slash/pathway**: `.slice-pathway` (a bright orange-white diagonal line rotated ~-50°)
-  and `.slice-katana` (SVG blade) sweep together corner-to-corner.
-- **Burn (was an orange explosion)**: now a **subtle darkening** with gentle drifting embers
-  (`.slice-ember`) — no bright radial burst (`.sliceBurst` was removed).
-- Background: `radial-gradient(circle at 80% 20%, #1A0D08, #000000)` (spec).
-- `SEEN_KEY = "animeintel:slice-seen"` in sessionStorage — first visit full intro,
-  returning visits quick slice. `?slice=1` forces full. 4s safety net + Skip button.
+## SliceIntro loader — CURRENT STATE (iterations complete)
+The intro: **slash draws diagonally → screen splits into two parts that slide
+apart → "ANIME INTEL" types out (brush font) with a katakana ghost subtitle
+(アニメ・インテル) → site fades in.** No WebGL/3D — pure CSS, works everywhere.
+- `TIMING` in `SliceIntro.tsx`: `intro { swe:1.4s, splitDelay:1.55s, splitDur:0.85s, fadeDelay:3.5s }`, `quick {...}` shortened.
+- Wordmark: **Zen Kurenaido** brush font (`--font-paper` in layout, next/font/google),
+  revealed with `clip-path` steps so it types in place. Katakana ghost `.slice-kana`
+  fades in at split-delay.
+- Split halves: `.slice-half--top/--bottom` (each 50% height, dark radial gradient)
+  stacked above the wordmark; slide up/down respectively, parted along the slash.
+- Slash: `.slice-pathway` neon line, rotate(-50deg), scaleX 0→1 over `--swe`.
+- `SEEN_KEY` sessionStorage quick-variant, `?slice=1` forces full, reduced-motion bypass.
+
+(The 3D katana attempt (three.js/KatanaScene) was **removed** — see commit history.)
+
+## Recent feature work
+- **SearchBar**: `/` shortcut focuses; recent searches (local `ai:recent-searches`);
+  Enter jumps to top result.
+- **AnimeStickyHeader** on `/anime/[id]`: fixed bar with poster/rating/ListButton
+  once scrolled past the hero.
+- **SideNav**: left-edge 3-bar button → slide-in drawer with Home/Discover/MyList
+  + genre quick-links. Mounted in layout.
 
 ## Status / shipping source of truth
 - Git history is the source of truth for what's shipped. Confirm against `git log`.
