@@ -64,7 +64,7 @@ function toSummary(m: any): AnimeSummary {
     title: m.title?.english ?? m.title?.romaji ?? "Unknown",
     titleEnglish: m.title?.english ?? null,
     titleJapanese: m.title?.native ?? null,
-    image: m.coverImage?.large ?? null,
+    image: m.coverImage?.extraLarge ?? m.coverImage?.large ?? null,
     rating: m.averageScore != null ? m.averageScore / 10 : null,
     scoredBy: m.stats?.scoreDistribution?.reduce((n: number, s: any) => n + s.amount, 0) ?? null,
     popularityRank: null, // AniList gives popularity as a count, not a rank
@@ -79,7 +79,7 @@ function toSummary(m: any): AnimeSummary {
 const SUMMARY_FIELDS = `
   id
   title { romaji english native }
-  coverImage { large }
+  coverImage { extraLarge large }
   averageScore
   stats { scoreDistribution { amount } }
   status

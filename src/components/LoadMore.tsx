@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AnimeCard from "./AnimeCard";
+import { SkeletonGrid } from "./Skeleton";
 import type { AnimeSummary } from "@/lib/types";
 
 // Pagination: pulls subsequent pages of results from an API endpoint and
@@ -45,6 +46,7 @@ export default function LoadMore({
           ))}
         </div>
       )}
+      {loading && <SkeletonGrid count={pageSize} />}
       {!exhausted && (
         <div className="pt-4 text-center">
           <button

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import AnimeCard from "@/components/AnimeCard";
-import GojoLoader from "@/components/GojoLoader";
+import { SkeletonGrid } from "@/components/Skeleton";
 import type { AnimeSummary } from "@/lib/types";
 import { MOODS, LENGTHS } from "@/lib/moods";
 
@@ -208,7 +208,7 @@ export default function DiscoverPage() {
           </div>
 
           {loading ? (
-            <GojoLoader text="Domain expansion! Finding your anime…" />
+            <SkeletonGrid count={12} />
           ) : results.length === 0 ? (
             <p className="py-20 text-center text-zinc-500">
               Nothing matched — loosen the filters.

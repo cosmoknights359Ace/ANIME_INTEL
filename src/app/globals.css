@@ -37,8 +37,10 @@
   z-index: 1;
   padding: 0.1em 0.1em 0.2em 0.1em;
   clip-path: inset(0 100% 0 0);
-  animation: sliceType 1.2s steps(12, end) forwards;
-  animation-delay: 1.6s;
+  /* type-reveal starts only after the split halves have fully opened,
+     so "INTEL" never overlaps the slash or the halves */
+  animation: sliceType 1.1s steps(12, end) forwards;
+  animation-delay: calc(var(--split-delay) + var(--split-dur));
 }
 /* katakana ghost subtitle under the wordmark — fades in with the split */
 .slice-kana {
@@ -50,7 +52,8 @@
   color: #b8a191;
   text-shadow: none;
   opacity: 0;
-  animation: sliceKana 1.1s ease-in var(--split-delay) forwards;
+  animation: sliceKana 1.1s ease-in forwards;
+  animation-delay: calc(var(--split-delay) + var(--split-dur));
 }
 @keyframes sliceKana {
   from {
