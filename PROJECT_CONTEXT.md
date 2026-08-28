@@ -51,7 +51,9 @@ apart → "ANIME INTEL" types out (brush font) with a katakana ghost subtitle
 
 ## Recent feature work
 - **SearchBar**: `/` shortcut focuses; recent searches (local `ai:recent-searches`);
-  Enter jumps to top result.
+  Enter jumps to top result; dropdown explicitly fetches `limit=12`.
+- **Search pagination**: `searchAnime(q, limit, page)` + `/api/search?p=&limit=`,
+  search page renders 48 + `<LoadMore>` pulls subsequent AniList pages.
 - **AnimeStickyHeader** on `/anime/[id]`: fixed bar with poster/rating/ListButton
   once scrolled past the hero.
 - **SideNav**: 3-bar button fixed at **top-left corner** (left-3, top ~4.5rem) →
