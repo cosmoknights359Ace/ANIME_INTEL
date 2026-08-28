@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+
+// 3D katana (client-only, three.js needs the browser). Replaces the old SVG blade.
+const KatanaScene = dynamic(() => import("./KatanaScene"), { ssr: false });
 
 const SEEN_KEY = "animeintel:slice-seen";
 
@@ -87,26 +91,8 @@ export default function SliceIntro() {
       {/* the neon pathway the blade carves — lower-left → upper-right */}
       <div className="slice-pathway" aria-hidden />
 
-      {/* the katana */}
-      <div className="slice-katana" aria-hidden>
-        <svg viewBox="0 0 360 60" className="w-72 sm:w-80">
-          <defs>
-            <linearGradient id="sliceBlade" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#ffc29e" />
-              <stop offset="55%" stopColor="#fff5e6" />
-              <stop offset="100%" stopColor="#ffc29e" />
-            </linearGradient>
-          </defs>
-          <g stroke="none">
-            <rect x="12" y="34" width="76" height="16" rx="6" fill="#161616" />
-            <path d="M24 36 v12 M36 36 v12 M48 36 v12 M60 36 v12 M72 36 v12" stroke="#3a3a3a" strokeWidth="2" />
-            <rect x="8" y="32" width="9" height="20" rx="2" fill="#0c0c0c" />
-            <rect x="90" y="22" width="9" height="32" rx="2" fill="#111" stroke="#d4af37" strokeWidth="1" />
-            <path d="M100 42 L352 42 L352 41 L104 39 Z" fill="url(#sliceBlade)" />
-            <path d="M306 44 L352 42 L302 40 Z" fill="#ffffff" />
-          </g>
-        </svg>
-      </div>
+      {/* the 3D katana sweeping along the slash */}
+      <KatanaScene />
 
       <button className="slice-skip" onClick={() => setGone(true)}>
         Skip

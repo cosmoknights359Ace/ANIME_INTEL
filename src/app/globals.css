@@ -147,47 +147,8 @@
   }
 }
 
-/* the katana — sweeps diagonally across the full screen, along the pathway */
-.slice-katana {
-  position: absolute;
-  z-index: 5;
-  top: -10vh;
-  left: 50vw;
-  width: 64vw;
-  height: 40px;
-  margin-left: -32vw;
-  transform-origin: 50% 50%;
-  opacity: 0;
-  animation:
-    sliceKatana var(--swe) cubic-bezier(0.35, 0, 0.15, 1) forwards,
-    sliceKatanaShine 1.6s linear forwards;
-}
-.slice-katana svg {
-  height: 100%;
-  width: 100%;
-}
-@keyframes sliceKatana {
-  0% {
-    /* start bottom-left, travel up-right along the -50deg diagonal */
-    transform: translate(-90vw, 110vh) rotate(-50deg);
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(90vw, -110vh) rotate(-50deg);
-    opacity: 0.9;
-  }
-}
-@keyframes sliceKatanaShine {
-  0% {
-    filter: brightness(1);
-  }
-  100% {
-    filter: brightness(0.5);
-  }
-}
+/* (the katana is now rendered in 3D by KatanaScene on a canvas — the old
+   2D SVG blade styles were removed) */
 
 .slice-skip {
   position: absolute;
