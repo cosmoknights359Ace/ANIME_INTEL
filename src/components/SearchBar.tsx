@@ -50,7 +50,7 @@ export default function SearchBar() {
       } finally {
         setLoading(false);
       }
-    }, 400);
+    }, 250);
     return () => clearTimeout(timer);
   }, [query]);
 

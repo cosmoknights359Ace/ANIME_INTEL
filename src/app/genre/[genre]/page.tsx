@@ -2,8 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getGenreAnime } from "@/lib/anilist";
 import AnimeCard from "@/components/AnimeCard";
+import LoadMore from "@/components/LoadMore";
 
 export const revalidate = 3600;
+
+const PAGE_SIZE = 48;
 
 export default async function GenrePage({
   params,
@@ -14,7 +17,7 @@ export default async function GenrePage({
   const decoded = decodeURIComponent(genre);
   if (decoded.length < 2 || decoded.length > 40) notFound();
 
-  const results = await getGenreAnime(decoded).catch(() => []);
+  const results = await getGenreAnime(decoded, PAGE_SIZE).catch(() => []);
 
   return (
     <div className="space-y-6">
@@ -31,11 +34,18 @@ export default async function GenrePage({
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {results.map((a) => (
-            <AnimeCard key={a.id} anime={a} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {results.map((a) => (
+              <AnimeCard key={a.id} anime={a} />
+            ))}
+          </div>
+          <LoadMore
+            endpoint={`/api/genre?g=${encodeURIComponent(decoded)}`}
+            initial={results}
+            pageSize={PAGE_SIZE}
+          />
+        </>
       )}
     </div>
   );

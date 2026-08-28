@@ -188,16 +188,19 @@ export async function getSeasonAnime(limit = 12): Promise<AnimeSummary[]> {
   return results;
 }
 
-export async function getGenreAnime(genre: string, limit = 24): Promise<AnimeSummary[]> {
-  const key = `al-genre:${genre.toLowerCase()}:${limit}`;
+export async function getGenreAnime(
+  genre: string,
+  limit = 24,
+  page = 1
+): Promise<AnimeSummary[]> {
+  const key = `al-genre:${genre.toLowerCase()}:${limit}:${page}`;
   const cached = cacheGet<AnimeSummary[]>(key);
   if (cached) return cached;
 
-  // AniList tags use regex-ish match; escape it so genre() is literal
   const escaped = genre.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const data = await gql<{ Page: { media: any[] } }>(
-    `query ($genre: String, $perPage: Int) {
-      Page(perPage: $perPage) {
+    `query ($genre: String, $perPage: Int, $page: Int) {
+      Page(perPage: $perPage, page: $page) {
         media(
           type: ANIME,
           isAdult: false,
@@ -206,7 +209,7 @@ export async function getGenreAnime(genre: string, limit = 24): Promise<AnimeSum
         ) { ${SUMMARY_FIELDS} }
       }
     }`,
-    { genre: escaped, perPage: limit }
+    { genre: escaped, perPage: limit, page }
   );
   if (!data) return [];
 

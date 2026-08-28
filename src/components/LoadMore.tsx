@@ -4,37 +4,36 @@ import { useState } from "react";
 import AnimeCard from "./AnimeCard";
 import type { AnimeSummary } from "@/lib/types";
 
-// Search pagination: pulls subsequent pages of results from /api/search and
-// appends them under the server-rendered first page (search/page.tsx).
+// Pagination: pulls subsequent pages of results from an API endpoint and
+// appends them under the server-rendered first page.
 export default function LoadMore({
-  query,
+  endpoint,
   initial,
   pageSize,
 }: {
-  query: string;
+  endpoint: string; // e.g. "/api/search?q=..." or "/api/genre?g=..."
   initial: AnimeSummary[];
   pageSize: number;
 }) {
   const [items, setItems] = useState<AnimeSummary[]>([]);
-  const [page, setPage] = useState(1); // next AniList page number
+  const [page, setPage] = useState(1); // next AniList page number (server rendered 1)
   const [loading, setLoading] = useState(false);
-  // The server rendered page 1 already, so the first fetch asks for page 2.
   const [exhausted, setExhausted] = useState(initial.length < pageSize);
 
   async function fetchPage() {
     setLoading(true);
-    try {
-      const res = await fetch(
-        `/api/search?q=${encodeURIComponent(query)}&p=${page + 1}&limit=${pageSize}`
-      );
+    const sep = endpoint.includes("?") ? "&" : "?";
+    const res = await fetch(
+      `${endpoint}${sep}p=${page + 1}&limit=${pageSize}`
+    ).catch(() => null);
+    if (res?.ok) {
       const data = await res.json();
       const next: AnimeSummary[] = data.results ?? [];
       setItems((prev) => [...prev, ...next]);
       setPage((p) => p + 1);
       if (next.length < pageSize) setExhausted(true);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }
 
   return (

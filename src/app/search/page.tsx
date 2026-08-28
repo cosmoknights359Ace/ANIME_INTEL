@@ -44,7 +44,7 @@ export default async function SearchPage({
               <AnimeCard key={`${a.id}-${i}`} anime={a} />
             ))}
           </div>
-          <LoadMore query={query} initial={results} pageSize={PAGE_SIZE} />
+          <LoadMore endpoint={`/api/search?q=${encodeURIComponent(query)}`} initial={results} pageSize={PAGE_SIZE} />
         </>
       )}
     </div>
