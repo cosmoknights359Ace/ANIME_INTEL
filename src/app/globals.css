@@ -71,58 +71,43 @@
   }
 }
 
-/* the "screen" that burns away — cracks/gaps appear then it dissolves */
-.slice-burn {
+/* the dark screen split into two halves, parted along the slash line.
+   They're stacked above the wordmark (z2) so the name is hidden until the
+   halves slide apart; the slash runs on top (z4). */
+.slice-half {
   position: absolute;
-  inset: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
   z-index: 2;
-  /* subtle darkening — no orange flash */
-  background: radial-gradient(circle at 50% 45%, rgba(20, 10, 6, 0.25), rgba(0, 0, 0, 0.7) 100%);
-  opacity: 0;
-  animation: sliceBurn var(--ash-dur) var(--ash-delay) ease forwards;
+  background: radial-gradient(circle at 80% 20%, #1a0d08, #000000 75%);
 }
-
-/* embers drifting up as it burns */
-.slice-ember {
-  position: absolute;
-  left: var(--x);
-  top: var(--y0);
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fde2c8 0%, #f97316 60%, transparent 100%);
-  box-shadow: 0 0 6px 1px rgba(249, 115, 22, 0.6);
-  z-index: 3;
-  opacity: 0;
-  animation: sliceEmber var(--d) var(--delay) ease-in infinite;
+.slice-half--top {
+  top: 0;
+  animation: sliceSplitTop var(--split-dur) cubic-bezier(0.75, 0, 0.2, 1) var(--split-delay) forwards;
 }
-@keyframes sliceEmber {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0) scale(var(--s));
+.slice-half--bottom {
+  bottom: 0;
+  animation: sliceSplitBottom var(--split-dur) cubic-bezier(0.75, 0, 0.2, 1) var(--split-delay) forwards;
+}
+@keyframes sliceSplitTop {
+  from {
+    transform: translateY(0);
   }
-  12% {
-    opacity: 0.8;
+  to {
+    transform: translateY(-105%);
   }
-  100% {
-    opacity: 0;
-    transform: translate(var(--drift), -40vh) scale(calc(var(--s) * 0.4));
+}
+@keyframes sliceSplitBottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(105%);
   }
 }
 
-@keyframes sliceBurn {
-  0% {
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-/* the neon pathway trailing the blade — lower-left → upper-right diagonal */
+/* the neon slash line — lower-left → upper-right diagonal */
 .slice-pathway {
   position: absolute;
   z-index: 4;
@@ -146,9 +131,6 @@
     transform: rotate(-50deg) scaleX(1);
   }
 }
-
-/* (the katana is now rendered in 3D by KatanaScene on a canvas — the old
-   2D SVG blade styles were removed) */
 
 .slice-skip {
   position: absolute;
