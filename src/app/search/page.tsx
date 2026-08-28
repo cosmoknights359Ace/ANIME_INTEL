@@ -1,8 +1,11 @@
 import AnimeCard from "@/components/AnimeCard";
 import SearchBar from "@/components/SearchBar";
+import LoadMore from "@/components/LoadMore";
 import { searchAnime } from "@/lib/anilist";
 
 export const dynamic = "force-dynamic";
+
+const PAGE_SIZE = 48;
 
 export default async function SearchPage({
   searchParams,
@@ -11,7 +14,7 @@ export default async function SearchPage({
 }) {
   const { q } = await searchParams;
   const query = (q ?? "").trim();
-  const results = query ? await searchAnime(query, 24).catch(() => []) : [];
+  const results = query ? await searchAnime(query, PAGE_SIZE).catch(() => []) : [];
 
   return (
     <div className="space-y-8">
@@ -35,11 +38,14 @@ export default async function SearchPage({
       )}
 
       {results.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
-          {results.map((a, i) => (
-            <AnimeCard key={`${a.id}-${i}`} anime={a} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+            {results.map((a, i) => (
+              <AnimeCard key={`${a.id}-${i}`} anime={a} />
+            ))}
+          </div>
+          <LoadMore query={query} initial={results} pageSize={PAGE_SIZE} />
+        </>
       )}
     </div>
   );

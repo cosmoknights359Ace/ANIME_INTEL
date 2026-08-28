@@ -89,18 +89,22 @@ const SUMMARY_FIELDS = `
   genres
 `;
 
-export async function searchAnime(query: string, limit = 12): Promise<AnimeSummary[]> {
-  const key = `al-search:${query.toLowerCase()}:${limit}`;
+export async function searchAnime(
+  query: string,
+  limit = 12,
+  page = 1
+): Promise<AnimeSummary[]> {
+  const key = `al-search:${query.toLowerCase()}:${limit}:${page}`;
   const cached = cacheGet<AnimeSummary[]>(key);
   if (cached) return cached;
 
   const data = await gql<{ Page: { media: any[] } }>(
-    `query ($search: String, $perPage: Int) {
-      Page(perPage: $perPage) {
+    `query ($search: String, $perPage: Int, $page: Int) {
+      Page(perPage: $perPage, page: $page) {
         media(search: $search, type: ANIME, sort: POPULARITY_DESC) { ${SUMMARY_FIELDS} synonyms }
       }
     }`,
-    { search: query, perPage: limit }
+    { search: query, perPage: limit, page }
   );
   if (!data) return [];
 
