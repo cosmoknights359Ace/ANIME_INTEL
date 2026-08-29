@@ -3,15 +3,19 @@ import Image from "next/image";
 import SearchBar from "@/components/SearchBar";
 import Carousel from "@/components/Carousel";
 import RandomButton from "@/components/RandomButton";
-import { getTopAnime, getSeasonAnime } from "@/lib/anilist";
+import { getTopAnime } from "@/lib/anilist";
+import { HOME_CATEGORIES } from "@/lib/categories";
 
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [top, season] = await Promise.all([
-    getTopAnime(60).catch(() => []),
-    getSeasonAnime(20).catch(() => []),
-  ]);
+  const top = await getTopAnime(30).catch(() => []);
+  const categories = await Promise.all(
+    HOME_CATEGORIES.map(async (c) => ({
+      ...c,
+      items: await c.fetch(c.sectionLimit).catch(() => []),
+    }))
+  );
   // Reuse the same covers for the blurred hero backdrop (already fetched)
   const backdrop = top.slice(0, 8).map((a) => a.image).filter(Boolean) as string[];
 
@@ -26,7 +30,7 @@ export default async function Home() {
                 <Image
                   key={i}
                   src={src}
-                  alt=""
+                  alt={""}
                   fill={false}
                   width={300}
                   height={420}
@@ -43,7 +47,7 @@ export default async function Home() {
           Anime answers, <span className="text-lime-400 drop-shadow-[0_0_18px_rgba(163,230,53,0.35)]">not anime data.</span>
         </h1>
         <p className="max-w-xl text-zinc-300">
-          Ratings, watch order, where to stream — without the clutter.
+          Ratings, watch order, where to stream — without the clutter..
         </p>
         <SearchBar />
         <Link
@@ -55,22 +59,20 @@ export default async function Home() {
         <RandomButton />
       </section>
 
-      <section>
-        <h2 className="mb-4 text-xl font-semibold">Top rated right now</h2>
-        <Carousel items={top} />
-      </section>
-
-      {season.length > 0 && (
-        <section>
+      {categories.map((c) => (
+        <section key={c.slug}>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Airing this season</h2>
-            <Link href="/discover" className="text-sm text-zinc-500 transition hover:text-lime-300">
-              Explore more →
+            <div>
+              <h2 className="text-xl font-semibold">{c.title}</h2>
+              {c.subtitle && <p className="text-sm text-zinc-500">{c.subtitle}</p>}
+            </div>
+            <Link href={`/category/${c.slug}`} className="text-sm text-zinc-500 transition hover:text-lime-300">
+              View all →
             </Link>
           </div>
-          <Carousel items={season} />
+          <Carousel items={c.items} />
         </section>
-      )}
+      ))}
     </div>
   );
 }

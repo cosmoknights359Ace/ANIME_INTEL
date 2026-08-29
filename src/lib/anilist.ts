@@ -132,33 +132,110 @@ export async function searchAnime(
   return results;
 }
 
+// AniList caps perPage at 50 — page through for larger limits so
+// category sections aren't silently truncated.
+
+const PAGE_SIZE = 50;
+
+interface MediaFilter {
+  sort?: string | string[];
+  season?: string;
+  seasonYear?: number;
+  isAdult?: boolean;
+  averageScore_greater?: number;
+  episodes_greater?: number;
+  status?: string;
+}
+
+const ENUM_VALUES = new Set(["sort", "season", "status", "type", "format"]);
+
+async function fetchPagedMedia(filters: MediaFilter, limit: number): Promise<AnimeSummary[]> {
+  const args = Object.entries({ type: "ANIME", ...filters })
+    .filter(([, v]) => v !== undefined)
+    .map(([k, v]) =>
+      k === "sort" && Array.isArray(v)
+        ? `sort: [${v.join(", ")}]`
+        : ENUM_VALUES.has(k)
+          ? `${k}: ${v}`
+          : `${k}: ${JSON.stringify(v)}`
+    )
+    .join(", ");
+
+  const results: AnimeSummary[] = [];
+  const pages = Math.ceil(limit / PAGE_SIZE);
+  for (let page = 1; page <= pages; page++) {
+    const data = await gql<{ Page: { media: any[] } }>(
+      `query ($perPage: Int, $page: Int) {
+        Page(perPage: $perPage, page: $page) {
+          media(${args}) { ${SUMMARY_FIELDS} }
+        }
+      }`,
+      { perPage: Math.min(PAGE_SIZE, limit - (page - 1) * PAGE_SIZE), page }
+    );
+    if (!data) break;
+    results.push(...data.Page.media.map(toSummary));
+  }
+  return results;
+}
+
+export async function getTrendingAnime(limit = 30): Promise<AnimeSummary[]> {
+  const key = `al-trending:${limit}`;
+  const cached = cacheGet<AnimeSummary[]>(key);
+  if (cached) return cached;
+
+  const results = await fetchPagedMedia({ sort: "TRENDING_DESC" }, limit);
+  cacheSet(key, results, TTL.top);
+  return results;
+}
+
+// Must-watch: highest-scored, broadly-loved finished shows.
+
+export async function getMustWatchAnime(limit = 30): Promise<AnimeSummary[]> {
+  const key = `al-mustwatch:${limit}`;
+  const cached = cacheGet<AnimeSummary[]>(key);
+  if (cached) return cached;
+
+  const filtered = await fetchPagedMedia(
+    { sort: "SCORE_DESC", status: "FINISHED", averageScore_greater: 80 },
+    limit * 2
+  );
+  const results = filtered.slice(0, limit);
+  cacheSet(key, results, TTL.top);
+  return results;
+}
+
+// Binge-worthy: long, finished, highly-rated series — great marathons.
+
+
+
+export async function getBingeWorthyAnime(limit =  30): Promise<AnimeSummary[]> {
+  const key = `al-binge:${limit}`;
+  const cached = cacheGet<AnimeSummary[]>(key);
+  if (cached) return cached;
+
+  const filtered = await fetchPagedMedia(
+    { sort: "SCORE_DESC", status: "FINISHED", episodes_greater: 24 },
+    limit * 2
+  );
+  const results = filtered.slice(0, limit);
+  cacheSet(key, results, TTL.top);
+  return results;
+}
+
 export async function getTopAnime(limit = 10): Promise<AnimeSummary[]> {
   const key = `al-top:${limit}`;
   const cached = cacheGet<AnimeSummary[]>(key);
   if (cached) return cached;
 
-  // AniList caps perPage at 50 — page through for larger limits
-  const pages = Math.ceil(limit / 50);
-  const results: AnimeSummary[] = [];
-  for (let page = 1; page <= pages; page++) {
-    const data = await gql<{ Page: { media: any[] } }>(
-      `query ($perPage: Int, $page: Int) {
-        Page(perPage: $perPage, page: $page) {
-          media(type: ANIME, sort: SCORE_DESC) { ${SUMMARY_FIELDS} }
-        }
-      }`,
-      { perPage: Math.min(50, limit - (page - 1) * 50), page }
-    );
-    if (!data) break;
-    results.push(...data.Page.media.map(toSummary));
-  }
+  const results = await fetchPagedMedia({ sort: "SCORE_DESC" }, limit);
   cacheSet(key, results, TTL.top);
   return results;
 }
 
-// Airing this week — the "is my show still on" section. Includes a few
+// Airing this season — the "is my show still on" section. Includes a few
 // recently-finished shows so the row isn't empty between seasons.
-export async function getSeasonAnime(limit = 12): Promise<AnimeSummary[]> {
+
+export async function getSeasonAnime(limit =  12): Promise<AnimeSummary[]> {
   const key = `al-season:${limit}`;
   const cached = cacheGet<AnimeSummary[]>(key);
   if (cached) return cached;
@@ -166,24 +243,11 @@ export async function getSeasonAnime(limit = 12): Promise<AnimeSummary[]> {
   const now = new Date();
   const season = ["FALL", "WINTER", "SPRING", "SUMMER"][Math.floor(now.getMonth() / 3)];
   const year = now.getFullYear();
-
-  const data = await gql<{ Page: { media: any[] } }>(
-    `query ($season: MediaSeason, $seasonYear: Int, $perPage: Int) {
-      Page(perPage: $perPage) {
-        media(
-          type: ANIME,
-          season: $season,
-          seasonYear: $seasonYear,
-          isAdult: false,
-          sort: POPULARITY_DESC
-        ) { ${SUMMARY_FIELDS} }
-      }
-    }`,
-    { season, seasonYear: year, perPage: limit }
+  const all = await fetchPagedMedia(
+    { sort: "POPULARITY_DESC", season, seasonYear: year, isAdult: false },
+    limit
   );
-  if (!data) return [];
-
-  const results = data.Page.media.filter((m) => m.status === "RELEASING").map(toSummary);
+  const results = all.filter((m) => m.status === "airing");
   cacheSet(key, results, TTL.top);
   return results;
 }
