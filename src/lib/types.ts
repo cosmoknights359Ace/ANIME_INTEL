@@ -9,6 +9,7 @@ export interface AnimeSummary {
   titleEnglish: string | null;
   titleJapanese: string | null;
   image: string | null;
+  bannerImage: string | null;
   rating: number | null;
   scoredBy: number | null;
   popularityRank: number | null;
@@ -17,6 +18,7 @@ export interface AnimeSummary {
   type: string | null; // TV, Movie, OVA, ...
   year: number | null;
   genres: string[];
+  description?: string | null;
 }
 
 export interface StreamingLink {

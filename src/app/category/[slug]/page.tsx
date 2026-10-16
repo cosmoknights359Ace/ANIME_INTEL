@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AnimeCard from "@/components/AnimeCard";
 import { getCategory } from "@/lib/categories";
+import { ArrowLeft, Sparkles } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -17,24 +18,42 @@ export default async function CategoryPage({
   const results = await category.fetch(category.pageLimit).catch(() => []);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-xs uppercase tracking-widest text-zinc-500">Category</p>
-        <h1 className="text-3xl font-bold tracking-tight">{category.title}</h1>
-        {category.subtitle && <p className="mt-1 text-zinc-400">{category.subtitle}</p>}
+    <div className="mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 lg:py-10 space-y-8">
+      {/* Header */}
+      <div className="border-b border-white/[0.08] pb-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-lime-300 transition-colors mb-3"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to Explore</span>
+        </Link>
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-lime-400">
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>Curated Collection</span>
+        </div>
+        <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          {category.title}
+        </h1>
+        {category.subtitle && (
+          <p className="mt-1 text-sm text-zinc-400">{category.subtitle}</p>
+        )}
       </div>
 
       {results.length === 0 ? (
-        <div className="rounded-xl bg-zinc-900 p-10 text-center ring-1 ring-zinc-800">
-          <p className="text-zinc-400">No anime found.</p>
-          <Link href="/" className="mt-2 inline-block text-sm text-lime-400 hover:text-lime-300">
-            ← Back to home
+        <div className="rounded-3xl border border-white/[0.08] bg-[#0c101a] p-12 text-center">
+          <p className="text-zinc-400">No anime found in this category.</p>
+          <Link
+            href="/"
+            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-lime-400 hover:text-lime-300"
+          >
+            ← Return to Home
           </Link>
         </div>
       ) : (
         <>
-          <p className="text-sm text-zinc-500">
-            {results.length} titles — no cap, everything in this category..
+          <p className="text-xs text-zinc-400">
+            Showing <span className="font-semibold text-zinc-200 tabular-nums">{results.length}</span> titles
           </p>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {results.map((a) => (

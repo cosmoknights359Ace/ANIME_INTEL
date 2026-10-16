@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Shuffle } from "lucide-react";
 
-// "Surprise me" button — hits /api/random and jumps to a random anime page.
 export default function RandomButton() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -23,9 +23,10 @@ export default function RandomButton() {
     <button
       onClick={go}
       disabled={loading}
-      className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-zinc-200 ring-1 ring-zinc-700 transition hover:ring-lime-400/60 disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-xl bg-white/[0.05] px-4 py-2 text-xs font-semibold text-zinc-200 border border-white/10 transition-all hover:bg-white/[0.09] hover:border-lime-400/50 hover:text-lime-300 disabled:opacity-50 active:scale-95"
     >
-      {loading ? "Rolling…" : "🎲 Surprise me"}
+      <Shuffle className={`h-3.5 w-3.5 ${loading ? "animate-spin text-lime-400" : ""}`} />
+      <span>{loading ? "Rolling..." : "Surprise Me"}</span>
     </button>
   );
 }

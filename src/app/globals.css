@@ -1,181 +1,264 @@
 @import "tailwindcss";
 
-/* ── Slice intro ────────────────────────────────────────────
-   A katana sweeps diagonally across a black void; its neon path
-   is highlighted, then the screen burns away into ashes to reveal
-   the site. Durations come from CSS vars set on .slice-root by the
-   component (intro vs quick-slice timing). */
+/* ── Custom Theme & Ambient Background ───────────────────────────── */
+:root {
+  --font-paper: "Zen Kurenaido", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
 
-.slice-root {
+body {
+  background-color: #07090e;
+  color: #e2e8f0;
+  font-family: var(--font-paper), sans-serif;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(ellipse 100% 50% at 50% -10%, rgba(163, 230, 53, 0.07), transparent 70%),
+    radial-gradient(ellipse 70% 35% at 90% 15%, rgba(99, 102, 241, 0.05), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* ── Heavy Cinematic Katana Slash + Anime Quote Card ───────────────
+   Dramatic anime slash:
+   1. Fast high-energy blade cuts across (-34deg) with electric flare.
+   2. Screen splits apart with deep velocity.
+   3. A cinematic anime quote card illuminates at center.
+   4. Dissolves gracefully into the Netflix-style hero. */
+
+.heavy-katana-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  /* pitch black background — spec */
+  background: transparent;
+  pointer-events: none;
+  animation: heavyFadeOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) 2.2s forwards;
+}
+
+/* The deep screen split halves */
+.heavy-split-top {
+  position: absolute;
+  inset: 0;
   background: #000000;
-  opacity: 1;
-  animation: sliceFade var(--fade-dur) ease forwards;
-  animation-delay: var(--fade-delay);
+  clip-path: polygon(0 0, 100% 0, 100% 40%, 0 60%);
+  transform-origin: top left;
+  animation: heavySplitTop 0.6s cubic-bezier(0.7, 0, 0.2, 1) 0.35s forwards;
 }
 
-/* the wordmark — thin Japanese serif (mincho) like ink on paper.
-   Fixed-width box revealed left-to-right via clip-path, so the text
-   types in place and stays centered (no width re-render shift). */
-.slice-wordmark {
+.heavy-split-bottom {
   position: absolute;
-  left: 50%;
-  top: 45%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-paper), "Zen Kurenaido", "Noto Serif JP", sans-serif;
-  font-weight: 400;
-  text-transform: uppercase;
-  font-size: clamp(2.2rem, 8vw, 5.5rem);
-  letter-spacing: 0.08em;
-  color: #f3d0b0;
-  text-shadow: 0 0 12px rgba(255, 180, 120, 0.45), 0 0 30px rgba(255, 107, 26, 0.5);
-  white-space: nowrap;
-  z-index: 1;
-  padding: 0.1em 0.1em 0.2em 0.1em;
-  clip-path: inset(0 100% 0 0);
-  /* type-reveal starts only after the split halves have fully opened,
-     so "INTEL" never overlaps the slash or the halves */
-  animation: sliceType 1.1s steps(12, end) forwards;
-  animation-delay: calc(var(--split-delay) + var(--split-dur));
-}
-/* katakana ghost subtitle under the wordmark — fades in with the split */
-.slice-kana {
-  display: block;
-  font-size: 0.28em;
-  letter-spacing: 0.6em;
-  margin-top: 0.9em;
-  margin-right: -0.6em; /* balance the trailing tracking space */
-  color: #b8a191;
-  text-shadow: none;
-  opacity: 0;
-  animation: sliceKana 1.1s ease-in forwards;
-  animation-delay: calc(var(--split-delay) + var(--split-dur));
-}
-@keyframes sliceKana {
-  from {
-    opacity: 0;
-    letter-spacing: 1.2em;
-  }
-  to {
-    opacity: 0.85;
-    letter-spacing: 0.6em;
-  }
+  inset: 0;
+  background: #000000;
+  clip-path: polygon(0 60%, 100% 40%, 100% 100%, 0 100%);
+  transform-origin: bottom right;
+  animation: heavySplitBottom 0.6s cubic-bezier(0.7, 0, 0.2, 1) 0.35s forwards;
 }
 
-@keyframes sliceType {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-/* the dark screen split into two halves, parted along the slash line.
-   They're stacked above the wordmark (z2) so the name is hidden until the
-   halves slide apart; the slash runs on top (z4). */
-.slice-half {
+/* High-voltage blade strike */
+.heavy-katana-streak {
   position: absolute;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  z-index: 2;
-  background: #000000; /* pitch black */
-}
-.slice-half--top {
-  top: 0;
-  animation: sliceSplitTop var(--split-dur) cubic-bezier(0.75, 0, 0.2, 1) var(--split-delay) forwards;
-}
-.slice-half--bottom {
-  bottom: 0;
-  animation: sliceSplitBottom var(--split-dur) cubic-bezier(0.75, 0, 0.2, 1) var(--split-delay) forwards;
-}
-@keyframes sliceSplitTop {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-105%);
-  }
-}
-@keyframes sliceSplitBottom {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(105%);
-  }
-}
-
-/* the neon slash line — lower-left → upper-right diagonal */
-.slice-pathway {
-  position: absolute;
-  z-index: 4;
   top: 50%;
   left: 50%;
-  width: 160vw;
+  width: 180vw;
   height: 3px;
-  margin-left: -80vw;
-  background: linear-gradient(90deg, transparent 0%, #ff7a00 8%, #ff8c00 22%, #fff4e6 46%, #fff4e6 52%, #ff8c00 78%, #ff7a00 92%, transparent 100%);
-  filter: blur(0.6px) drop-shadow(0 0 22px #ff7a00) drop-shadow(0 0 4px #fff4e6);
-  box-shadow: 0 0 45px 10px rgba(255, 124, 0, 0.65);
+  margin-left: -90vw;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(163, 230, 53, 0.2) 10%,
+    rgba(255, 255, 255, 0.95) 45%,
+    #ffffff 50%,
+    rgba(255, 255, 255, 0.95) 55%,
+    rgba(56, 189, 248, 0.4) 85%,
+    transparent 100%
+  );
+  filter: drop-shadow(0 0 12px #a3e635) drop-shadow(0 0 30px #38bdf8);
+  box-shadow: 0 0 30px 6px rgba(163, 230, 53, 0.8), 0 0 60px 12px rgba(56, 189, 248, 0.5);
   transform-origin: 50% 50%;
-  transform: rotate(-50deg) scaleX(0);
-  animation: slicePath var(--swe) cubic-bezier(0.3, 0, 0.2, 1) forwards;
-}
-@keyframes slicePath {
-  from {
-    transform: rotate(-50deg) scaleX(0);
-  }
-  to {
-    transform: rotate(-50deg) scaleX(1);
-  }
+  transform: rotate(-34deg) scaleX(0);
+  animation: heavyBladeCut 0.35s cubic-bezier(0.1, 0.95, 0.1, 1) forwards;
 }
 
-.slice-skip {
+/* Central spark flash */
+.heavy-blade-flare {
   position: absolute;
-  right: 18px;
-  bottom: 18px;
-  z-index: 6;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.06);
-  color: #d4d4d8;
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.slice-skip:hover {
-  background: rgba(163, 230, 53, 0.18);
-  color: #ecfccb;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(163, 230, 53, 0.6) 35%, transparent 70%);
+  border-radius: 50%;
+  animation: heavyFlarePop 0.4s ease-out 0.22s forwards;
 }
 
-/* Fade the whole thing out into the page */
-@keyframes sliceFade {
-  from {
+/* Anime Quote Card revealed behind the slash */
+.heavy-quote-card {
+  position: relative;
+  z-index: 10;
+  max-width: 680px;
+  width: 90%;
+  padding: 2.25rem 2rem;
+  background: rgba(10, 13, 20, 0.92);
+  border: 1px solid rgba(163, 230, 53, 0.35);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(163, 230, 53, 0.2);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.92);
+  animation: quoteCardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
+}
+
+@keyframes heavyBladeCut {
+  0% {
+    transform: rotate(-34deg) scaleX(0);
+    opacity: 0.1;
+  }
+  35% {
     opacity: 1;
   }
-  to {
+  100% {
+    transform: rotate(-34deg) scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes heavySplitTop {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-15%, -110%);
+    opacity: 0;
+  }
+}
+
+@keyframes heavySplitBottom {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(15%, 110%);
+    opacity: 0;
+  }
+}
+
+@keyframes heavyFlarePop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes quoteCardReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heavyFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
     opacity: 0;
     visibility: hidden;
   }
 }
 
-/* SideNav drawer links */
+@keyframes quoteProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes scaleUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-quoteProgress {
+  animation: quoteProgress 3.2s linear forwards;
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* ── Netflix Glass & Rail Customizations ──────────────────────────── */
+
+.netflix-glass {
+  background: rgba(14, 18, 28, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .sidenav-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   border-radius: 8px;
-  padding: 0.45rem 0.6rem;
+  padding: 0.55rem 0.75rem;
   font-size: 0.875rem;
-  color: #d4d4d8;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  color: #94a3b8;
+  transition: all 0.15s ease;
 }
 .sidenav-link:hover {
-  background-color: #27272a;
-  color: #ecfccb;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+}
+
+/* Clean Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #07090e;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
 }

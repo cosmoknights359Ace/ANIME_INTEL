@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getGenreAnime } from "@/lib/anilist";
 import AnimeCard from "@/components/AnimeCard";
 import LoadMore from "@/components/LoadMore";
+import { ArrowLeft, Tag } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -20,21 +21,43 @@ export default async function GenrePage({
   const results = await getGenreAnime(decoded, PAGE_SIZE).catch(() => []);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-xs uppercase tracking-widest text-zinc-500">Genre</p>
-        <h1 className="text-3xl font-bold tracking-tight capitalize">{decoded}</h1>
+    <div className="mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 lg:py-10 space-y-8">
+      {/* Header */}
+      <div className="border-b border-white/[0.08] pb-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-lime-300 transition-colors mb-3"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to Explore</span>
+        </Link>
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-lime-400">
+          <Tag className="h-3.5 w-3.5" />
+          <span>Genre Catalog</span>
+        </div>
+        <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold tracking-tight text-white capitalize">
+          {decoded}
+        </h1>
+        <p className="mt-1 text-sm text-zinc-400">
+          Curated top-ranking anime in the {decoded} category.
+        </p>
       </div>
 
       {results.length === 0 ? (
-        <div className="rounded-xl bg-zinc-900 p-10 text-center ring-1 ring-zinc-800">
+        <div className="rounded-3xl border border-white/[0.08] bg-[#0c101a] p-12 text-center">
           <p className="text-zinc-400">No anime found for this genre.</p>
-          <Link href="/" className="mt-2 inline-block text-sm text-lime-400 hover:text-lime-300">
-            ← Back to home
+          <Link
+            href="/"
+            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-lime-400 hover:text-lime-300"
+          >
+            ← Back to Home
           </Link>
         </div>
       ) : (
         <>
+          <p className="text-xs text-zinc-400">
+            Showing <span className="font-semibold text-zinc-200 tabular-nums">{results.length}</span> titles
+          </p>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {results.map((a) => (
               <AnimeCard key={a.id} anime={a} />

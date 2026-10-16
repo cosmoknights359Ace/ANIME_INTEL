@@ -1,0 +1,7 @@
+{
+  "name": "AnimeIntel",
+  "description": "Ratings, watch order, streaming availability and more — without the clutter.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

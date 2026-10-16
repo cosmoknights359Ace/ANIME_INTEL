@@ -65,6 +65,7 @@ function toSummary(m: any): AnimeSummary {
     titleEnglish: m.title?.english ?? null,
     titleJapanese: m.title?.native ?? null,
     image: m.coverImage?.extraLarge ?? m.coverImage?.large ?? null,
+    bannerImage: m.bannerImage ?? null,
     rating: m.averageScore != null ? m.averageScore / 10 : null,
     scoredBy: m.stats?.scoreDistribution?.reduce((n: number, s: any) => n + s.amount, 0) ?? null,
     popularityRank: null, // AniList gives popularity as a count, not a rank
@@ -73,6 +74,7 @@ function toSummary(m: any): AnimeSummary {
     type: m.format ?? null,
     year: m.seasonYear ?? null,
     genres: m.genres ?? [],
+    description: m.description ? m.description.replace(/<[^>]*>/g, "").trim() : null,
   };
 }
 
@@ -80,6 +82,7 @@ const SUMMARY_FIELDS = `
   id
   title { romaji english native }
   coverImage { extraLarge large }
+  bannerImage
   averageScore
   stats { scoreDistribution { amount } }
   status
@@ -87,6 +90,7 @@ const SUMMARY_FIELDS = `
   format
   seasonYear
   genres
+  description(asHtml: false)
 `;
 
 export async function searchAnime(

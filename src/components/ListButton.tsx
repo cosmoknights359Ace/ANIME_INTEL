@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Check, Plus, Trash2, BookmarkCheck, ChevronDown } from "lucide-react";
 import type { AnimeSummary } from "@/lib/types";
 import {
   LIST_STATUSES,
@@ -11,12 +12,32 @@ import {
 } from "@/lib/list";
 import { useListEntry } from "@/lib/useList";
 
-const STATUS_STYLE: Record<ListStatus, string> = {
-  watching: "bg-lime-400/15 text-lime-300 ring-lime-400/40",
-  completed: "bg-sky-400/15 text-sky-300 ring-sky-400/40",
-  plan: "bg-orange-400/15 text-orange-300 ring-orange-400/40",
-  paused: "bg-zinc-400/15 text-zinc-300 ring-zinc-400/40",
-  dropped: "bg-red-400/15 text-red-300 ring-red-400/40",
+const STATUS_STYLE: Record<ListStatus, { bg: string; text: string; border: string }> = {
+  watching: {
+    bg: "bg-lime-400/15",
+    text: "text-lime-300",
+    border: "border-lime-400/40",
+  },
+  completed: {
+    bg: "bg-sky-400/15",
+    text: "text-sky-300",
+    border: "border-sky-400/40",
+  },
+  plan: {
+    bg: "bg-amber-400/15",
+    text: "text-amber-300",
+    border: "border-amber-400/40",
+  },
+  paused: {
+    bg: "bg-zinc-400/15",
+    text: "text-zinc-300",
+    border: "border-zinc-400/40",
+  },
+  dropped: {
+    bg: "bg-red-400/15",
+    text: "text-red-300",
+    border: "border-red-400/40",
+  },
 };
 
 export default function ListButton({
@@ -32,7 +53,9 @@ export default function ListButton({
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
-      if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
     }
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
@@ -51,17 +74,17 @@ export default function ListButton({
             e.stopPropagation();
             setOpen((v) => !v);
           }}
-          aria-label="Add to list"
-          className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold ring-1 transition ${
+          aria-label="Add or change list status"
+          className={`flex h-8 w-8 items-center justify-center rounded-lg border backdrop-blur-md shadow-md transition-all active:scale-90 ${
             entry
-              ? STATUS_STYLE[entry.status]
-              : "bg-zinc-800/80 text-zinc-300 ring-zinc-600 hover:text-lime-300 hover:ring-lime-400"
+              ? `${STATUS_STYLE[entry.status].bg} ${STATUS_STYLE[entry.status].text} ${STATUS_STYLE[entry.status].border}`
+              : "bg-black/60 text-zinc-300 border-white/10 hover:border-lime-400/60 hover:text-lime-300"
           }`}
         >
-          {entry ? "✓" : "+"}
+          {entry ? <BookmarkCheck className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
         </button>
         {open && (
-          <div className="absolute right-0 z-30 mt-1 w-40 overflow-hidden rounded-lg bg-zinc-900 py-1 ring-1 ring-zinc-700 shadow-xl">
+          <div className="absolute right-0 z-40 mt-1.5 w-44 overflow-hidden rounded-xl bg-[#0e121c] py-1 border border-white/10 shadow-2xl backdrop-blur-xl">
             {LIST_STATUSES.map((s) => (
               <button
                 key={s.key}
@@ -71,11 +94,12 @@ export default function ListButton({
                   setStatus(anime, s.key);
                   setOpen(false);
                 }}
-                className={`block w-full px-3 py-1.5 text-left text-xs hover:bg-zinc-800 ${
-                  entry?.status === s.key ? "text-lime-300" : "text-zinc-300"
+                className={`flex w-full items-center justify-between px-3.5 py-2 text-left text-xs transition-colors hover:bg-white/[0.06] ${
+                  entry?.status === s.key ? "text-lime-300 font-semibold" : "text-zinc-300"
                 }`}
               >
-                {s.label}
+                <span>{s.label}</span>
+                {entry?.status === s.key && <Check className="h-3.5 w-3.5 text-lime-400" />}
               </button>
             ))}
             {entry && (
@@ -86,9 +110,10 @@ export default function ListButton({
                   removeEntry(anime.id);
                   setOpen(false);
                 }}
-                className="block w-full px-3 py-1.5 text-left text-xs text-red-400 hover:bg-zinc-800"
+                className="flex w-full items-center gap-2 border-t border-white/[0.06] px-3.5 py-2 text-left text-xs text-red-400 hover:bg-white/[0.06] transition-colors"
               >
-                Remove
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Remove from List</span>
               </button>
             )}
           </div>
@@ -101,16 +126,28 @@ export default function ListButton({
     <div ref={boxRef} className="relative inline-block">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`rounded-lg px-4 py-2 text-sm font-medium ring-1 transition ${
+        className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold border backdrop-blur-sm transition-all active:scale-95 ${
           entry
-            ? STATUS_STYLE[entry.status]
-            : "bg-lime-400 text-zinc-950 ring-lime-400 hover:bg-lime-300"
+            ? `${STATUS_STYLE[entry.status].bg} ${STATUS_STYLE[entry.status].text} ${STATUS_STYLE[entry.status].border}`
+            : "bg-white/[0.06] text-zinc-100 border-white/10 hover:border-lime-400/50 hover:bg-white/[0.1]"
         }`}
       >
-        {entry ? `✓ ${currentLabel}` : "+ Add to List"}
+        {entry ? (
+          <>
+            <BookmarkCheck className="h-4 w-4" />
+            <span>{currentLabel}</span>
+          </>
+        ) : (
+          <>
+            <Plus className="h-4 w-4" />
+            <span>Add to List</span>
+          </>
+        )}
+        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
       </button>
+
       {open && (
-        <div className="absolute z-30 mt-2 w-48 overflow-hidden rounded-xl bg-zinc-900 py-1 ring-1 ring-zinc-700 shadow-xl">
+        <div className="absolute left-0 z-40 mt-2 w-48 overflow-hidden rounded-xl bg-[#0e121c] py-1 border border-white/10 shadow-2xl backdrop-blur-xl">
           {LIST_STATUSES.map((s) => (
             <button
               key={s.key}
@@ -118,12 +155,12 @@ export default function ListButton({
                 setStatus(anime, s.key);
                 setOpen(false);
               }}
-              className={`block w-full px-4 py-2 text-left text-sm hover:bg-zinc-800 ${
-                entry?.status === s.key ? "text-lime-300" : "text-zinc-300"
+              className={`flex w-full items-center justify-between px-4 py-2.5 text-left text-xs sm:text-sm transition-colors hover:bg-white/[0.06] ${
+                entry?.status === s.key ? "text-lime-300 font-semibold" : "text-zinc-300"
               }`}
             >
-              {entry?.status === s.key ? "✓ " : ""}
-              {s.label}
+              <span>{s.label}</span>
+              {entry?.status === s.key && <Check className="h-4 w-4 text-lime-400" />}
             </button>
           ))}
           {entry && (
@@ -132,9 +169,10 @@ export default function ListButton({
                 removeEntry(anime.id);
                 setOpen(false);
               }}
-              className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-zinc-800"
+              className="flex w-full items-center gap-2 border-t border-white/[0.06] px-4 py-2 text-left text-xs sm:text-sm text-red-400 hover:bg-white/[0.06] transition-colors"
             >
-              Remove from list
+              <Trash2 className="h-3.5 w-3.5" />
+              <span>Remove from List</span>
             </button>
           )}
         </div>
@@ -149,23 +187,23 @@ export function ProgressControl({ animeId }: { animeId: number }) {
 
   const total = entry.episodes;
   return (
-    <div className="inline-flex items-center gap-2 rounded-lg bg-zinc-800 px-3 py-2 ring-1 ring-zinc-700">
-      <span className="text-xs text-zinc-400">Progress</span>
+    <div className="inline-flex items-center gap-2 rounded-xl bg-[#0e121c] border border-white/10 px-3 py-1.5 text-xs">
+      <span className="text-zinc-400 font-medium">Progress</span>
       <button
         onClick={() => setProgress(animeId, entry.progress - 1)}
         disabled={entry.progress <= 0}
-        className="h-6 w-6 rounded bg-zinc-700 text-sm text-zinc-200 transition hover:bg-zinc-600 disabled:opacity-30"
+        className="flex h-6 w-6 items-center justify-center rounded-lg bg-zinc-800 text-sm font-semibold text-zinc-200 transition hover:bg-zinc-700 disabled:opacity-30"
       >
         −
       </button>
-      <span className="min-w-16 text-center text-sm text-zinc-100">
+      <span className="min-w-16 text-center text-sm font-semibold text-zinc-100 tabular-nums">
         {entry.progress}
         {total != null ? ` / ${total}` : ""}
       </span>
       <button
         onClick={() => setProgress(animeId, entry.progress + 1)}
         disabled={total != null && entry.progress >= total}
-        className="h-6 w-6 rounded bg-zinc-700 text-sm text-zinc-200 transition hover:bg-zinc-600 disabled:opacity-30"
+        className="flex h-6 w-6 items-center justify-center rounded-lg bg-zinc-800 text-sm font-semibold text-zinc-200 transition hover:bg-zinc-700 disabled:opacity-30"
       >
         +
       </button>
