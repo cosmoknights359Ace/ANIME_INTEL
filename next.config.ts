@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Standalone output is for container runtimes; on Vercel it causes next-server.js.nft.json ENOENT
+  output: process.env.VERCEL ? undefined : "standalone",
   // Allow preview proxy origins in development mode
   allowedDevOrigins: [
     "ais-dev-jsw2yfjg6ydqib6zifsndn-901533360401.asia-southeast1.run.app",
@@ -17,6 +18,7 @@ const nextConfig: NextConfig = {
   ],
   images: {
     remotePatterns: [
+      { protocol: "https", hostname: "*.anilist.co" },
       { protocol: "https", hostname: "s4.anilist.co" },
       { protocol: "https", hostname: "img.anili.st" },
     ],
