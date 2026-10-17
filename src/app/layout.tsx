@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Zen_Kurenaido } from "next/font/google";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import SliceIntro from "@/components/SliceIntro";
 import SideNav from "@/components/SideNav";
 import RandomButton from "@/components/RandomButton";
@@ -126,6 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
